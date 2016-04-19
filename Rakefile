@@ -44,10 +44,9 @@ end
 def build_deb
 end
 
-module metadata
-  class github
+module Metadata
+  class Github
     require 'octokit'
-    gem 'faraday-http-cache'
 
     def initialize(repo)
       #netrc_file = File.join(ENV['HOME'], '.netrc')
@@ -55,7 +54,13 @@ module metadata
       #require 'netrc' if enable_netrc
       #@client = Octokit::Client.new(:netrc : enable_netrc)
       #@client.login
-      #
+      enable_http_cache
+
+      @repo = Octokit.repo repo
+    end
+
+    def enable_http_cache
+      require 'faraday-http-cache'
       stack = Faraday::RackBuilder.new do |builder|
         builder.use Faraday::HttpCache
         builder.use Octokit::Response::RaiseError
@@ -63,14 +68,30 @@ module metadata
       end
 
       Octokit.middleware = stack
-      @repo = Octokit.repo repo
+    rescue LoadError
     end
-
     %w{issues, release}
   end
 end
 
+
+def git_repo(repo_name, repo_url)
+  require 'rugged'
+  repo_path = File.join('./', repo_name)
+  Rugged::Repository.new(repo_path)
+rescue Rugged::OSError
+  Rugged::Repository.clone_at repo_url, repo_path
+  Rugged::Repository.new(repo_path)
+end
+
 namespace :package do
+  desc "build go binary"
+  task :go do
+    snap_repo = git_repo "snap", "https://github.com/intelsdi-x/snap.git"
+    puts snap_repo.path
+    puts snap_repo.head
+    binding.pry
+  end
 
   desc "generate all RedHat RPM packages"
   task :redhat => [:redhat_7]
