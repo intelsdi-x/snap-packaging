@@ -1,0 +1,7 @@
+---
+# hosts: centos72
+- include: tasks/redhat.yml
+  when: ansible_os_family == 'RedHat'
+# hosts: ubuntu1604
+- include: tasks/debian.yml
+  when: ansible_os_family == 'Debian'

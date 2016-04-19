@@ -1,0 +1,16 @@
+---
+- name: RedHat
+  hosts: all
+  tasks:
+    - name: install fpm requirements
+      yum: name={{ item }} state=latest
+      with_items:
+        - ruby-devel
+        - gcc
+        - make
+    # NOTE: Fix FFI #368 on Centos 7:
+    # https://github.com/ffi/ffi/issues/368
+    - name: install ffi
+      gem: name=ffi state=latest build_flags='--platform=ruby'
+    - name: install fpm
+      gem: name=fpm state=latest
