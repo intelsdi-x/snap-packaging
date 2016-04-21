@@ -8,9 +8,10 @@
         - ruby-devel
         - gcc
         - make
+        - rpm-build
     # NOTE: Fix FFI #368 on Centos 7:
     # https://github.com/ffi/ffi/issues/368
     - name: install ffi
-      gem: name=ffi state=latest build_flags='--platform=ruby'
+      gem: name=ffi state=latest build_flags='--platform=ruby' user_install=no
     - name: install fpm
-      gem: name=fpm state=latest
+      gem: name=fpm state=latest user_install=no

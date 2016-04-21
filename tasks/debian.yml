@@ -9,4 +9,4 @@
         - gcc
         - make
     - name: install fpm
-      gem: name=fpm state=latest
+      gem: name=fpm state=latest user_install=no
