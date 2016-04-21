@@ -2,7 +2,6 @@
 # vi: set ft=ruby :
 
 # NOTE: override this by configuring --provider {provider_name}
-CURRENT_DEFAULT_PROVIDER = ENV['VAGRANT_DEFAULT_PROVIDER']
 ENV['VAGRANT_DEFAULT_PROVIDER'] = 'parallels'
 
 Vagrant.configure(2) do |config|
@@ -23,5 +22,3 @@ Vagrant.configure(2) do |config|
     ansible.sudo = true
   end
 end
-
-ENV['VAGRANT_DEFAULT_PROVIDER'] = CURRENT_DEFAULT_PROVIDER
