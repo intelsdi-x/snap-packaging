@@ -15,7 +15,7 @@ Vagrant.configure(2) do |config|
       system.vm.box = "boxcutter/#{os}"
     end
 
-    config.vm.synced_folder "./pkgs", "/packages"
+    config.vm.synced_folder "./artifacts", "/artifacts"
   end
 
   config.vm.provision "ansible" do |ansible|
