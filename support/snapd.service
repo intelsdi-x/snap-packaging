@@ -1,0 +1,12 @@
+[Unit]
+Description=Snap daemon
+Documentation=man:snapd(8) man:snapd_conf(5)
+After=syslog.target network.target
+
+[Service]
+ExecStart=/usr/bin/snapd --config /etc/snap/snapd.conf.yaml
+ExecStop=/bin/kill -INT $MAINPID
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
