@@ -1,24 +1,41 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# NOTE: override this by configuring --provider {provider_name}
+# NOTE: override this via the option --provider {provider_name}
 ENV['VAGRANT_DEFAULT_PROVIDER'] = 'parallels'
 
 Vagrant.configure(2) do |config|
-  # NOTE: boxes obtained from https://atlas.hashicorp.com/boxcutter
+  # Global settings:
+  config.vm.synced_folder "./artifacts", "/artifacts"
+
+  config.vm.provider 'parallels' do |vm|
+    vm.linked_clone = true if Vagrant::VERSION =~ /^1.8/
+  end
+
+  # NOTE: these boxes are not intended to test packages.
+  build_systems = {
+    redhat: 'boxcutter/centos72',
+    debian: 'boxcutter/ubuntu1604',
+  }
+
+  build_systems.each do |os, box|
+    config.vm.define os do |system|
+      system.vm.box = box
+
+      config.vm.provision "ansible" do |ansible|
+        ansible.playbook = "build.yml"
+        ansible.sudo = true
+      end
+    end
+  end
+
+  # NOTE: test boxes obtained from https://atlas.hashicorp.com/boxcutter
   # packer build source repo: https://github.com/boxcutter
-  operating_systems = %w{ centos72 ubuntu1604 }
+  operating_systems = %w{ centos67 centos72 ubuntu1604 }
 
   operating_systems.each do |os|
     config.vm.define os do |system|
       system.vm.box = "boxcutter/#{os}"
     end
-
-    config.vm.synced_folder "./artifacts", "/artifacts"
-  end
-
-  config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "playbook.yml"
-    ansible.sudo = true
   end
 end

@@ -1,0 +1,130 @@
+#!/bin/bash
+# snapd         Init script for running the snapd daemon
+#
+# Author:       Nan Liu <nan.liu@intel.com>
+#
+# chkconfig: - 98 02
+#
+# description: Snap is a framework for enabling the gathering of telemetry from systems.
+# processname: snapd
+# config: /etc/sysconfig/snapd
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+[ -f /etc/sysconfig/snapd ] && . /etc/sysconfig/snapd
+lockfile=/var/lock/subsys/snapd
+piddir=/var/run/snap
+pidfile=${piddir}/snapd.pid
+snapd=/opt/snap/bin/snapd
+pid=$(cat $pidfile 2> /dev/null)
+RETVAL=0
+
+# Determine if we can use the -p option to daemon, killproc, and status.
+# RHEL < 5 can't.
+if status | grep -q -- '-p' 2>/dev/null; then
+    daemonopts="--pidfile $pidfile"
+    pidopts="-p $pidfile"
+    USEINITFUNCTIONS=true
+fi
+
+echo_result() {
+  if [ $1 -eq 0 ]; then
+    echo_success
+  else
+    echo_failure
+  fi
+}
+
+start() {
+    echo -n $"Starting snap daemon: "
+    mkdir -p $piddir
+    # NOTE: we currently do not support /etc/init.d/functions daemon
+    # daemon $daemonopts $snapd ${SNAPD_OPTS} ${SNAPD_EXTRA_OPTS}
+    $snapd ${SNAPD_OPTS} ${SNAPD_EXTRA_OPTS} > /dev/null 2>&1 &
+    PID=$!
+    RETVAL=$?
+    echo_result $RETVAL
+    echo
+        [ $RETVAL = 0 ] && touch ${lockfile} && echo $PID > ${pidfile}
+        return $RETVAL
+}
+
+stop() {
+    echo -n $"Stopping snap daemon: "
+    if [ "$USEINITFUNCTIONS" = "true" ]; then
+      killproc $pidopts $snapd
+      RETVAL=$?
+    else
+      if [ -n "${pid}" ]; then
+        kill -TERM $pid >/dev/null 2>&1
+        RETVAL=$?
+      fi
+    fi
+    echo
+    [ $RETVAL = 0 ] && rm -f ${lockfile} ${pidfile}
+    return $RETVAL
+}
+
+restart() {
+    stop
+    start
+}
+
+rh_status() {
+    base=snapd
+    if [ "$USEINITFUNCTIONS" = "true" ]; then
+      status $pidopts $snapd
+      RETVAL=$?
+      return $RETVAL
+    else
+      if [ -n "${pid}" ]; then
+        if `ps -p $pid | grep $pid > /dev/null 2>&1`; then
+          echo "${base} (pid ${pid}) is running..."
+          RETVAL=0
+          return $RETVAL
+        fi
+      fi
+      if [ -f "${pidfile}" ] ; then
+        echo "${base} dead but pid file exists"
+        RETVAL=1
+        return $RETVAL
+      fi
+      if [ -f "${lockfile}" ]; then
+        echo "${base} dead but subsys locked"
+        RETVAL=2
+        return $RETVAL
+      fi
+      echo "${base} is stopped"
+      RETVAL=3
+      return $RETVAL
+    fi
+}
+
+rh_status_q() {
+    rh_status >/dev/null 2>&1
+}
+
+case "$1" in
+    start)
+        start
+    ;;
+    stop)
+        stop
+    ;;
+    restart)
+        restart
+    ;;
+    condrestart|try-restart)
+        rh_status_q || exit 0
+        restart
+    ;;
+    status)
+        rh_status
+    ;;
+    *)
+        echo $"Usage: $0 {start|stop|status|restart|condrestart}"
+        exit 1
+esac
+
+exit $RETVAL
