@@ -20,6 +20,7 @@ machine api.github.com
 Build matrix
 
 | package format | tool | limitations |
+| --- | --- | --- |
 | Redhat RPM | fpm | execute on RedHat |
 | Debian Deb | fpm | execute on Ubuntu |
 | MacOS pkg | fpm | execute on MacOS |
