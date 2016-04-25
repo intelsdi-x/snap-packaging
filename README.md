@@ -43,8 +43,6 @@ $ pkgutil --list com.intel.pkg.snap
 
 Remove:
 
-```
-
 MacOS Homebrew:
 
 Installation:
@@ -52,6 +50,8 @@ Installation:
 $ brew install snap
 ```
 
-## Vagrant Testing
+## Vagrant
 
-The 
+The Vagrant VMs are split between build nodes and test nodes. Build nodes are named after OS family and allows building of snap packages for those platforms. Test nodes are named after specific operating systems and allow testing of snap packages built for that specific OS.
+
+
