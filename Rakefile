@@ -288,8 +288,6 @@ gox \
     examples_path = File.join ARTIFACTS_PATH, 'src', 'github.com/intelsdi-x/snap/examples'
     FileUtils.cp_r examples_path, File.join(staging_path, "opt/snap/") if File.directory? examples_path
 
-    FileUtils.cp snapctl_bin, staging_bin
-
     # NOTE: wrapping because how vagrant is packaged:
     # https://github.com/mitchellh/vagrant/issues/6158#issuecomment-153507010
     Bundler.with_clean_env do
@@ -359,8 +357,6 @@ vagrant ssh debian -c \
 
     examples_path = File.join ARTIFACTS_PATH, 'src', 'github.com/intelsdi-x/snap/examples'
     FileUtils.cp_r examples_path, File.join(staging_path, "opt/snap/") if File.directory? examples_path
-
-    FileUtils.cp snapctl_bin, staging_bin
 
     # NOTE: wrapping because how vagrant is packaged:
     # https://github.com/mitchellh/vagrant/issues/6158#issuecomment-153507010
@@ -434,8 +430,6 @@ vagrant ssh debian -c \
     examples_path = File.join ARTIFACTS_PATH, 'src', 'github.com/intelsdi-x/snap/examples'
     FileUtils.cp_r examples_path, File.join(staging_path, "opt/snap/") if File.directory? examples_path
 
-    FileUtils.cp snapctl_bin, staging_bin
-
     # NOTE: wrapping because how vagrant is packaged:
     # https://github.com/mitchellh/vagrant/issues/6158#issuecomment-153507010
     Bundler.with_clean_env do
@@ -507,8 +501,6 @@ vagrant ssh redhat -c \
     examples_path = File.join ARTIFACTS_PATH, 'src', 'github.com/intelsdi-x/snap/examples'
     FileUtils.cp_r examples_path, File.join(staging_path, "opt/snap/") if File.directory? examples_path
 
-    FileUtils.cp snapctl_bin, staging_bin
-
     # NOTE: wrapping because how vagrant is packaged:
     # https://github.com/mitchellh/vagrant/issues/6158#issuecomment-153507010
     Bundler.with_clean_env do
@@ -539,7 +531,65 @@ vagrant ssh redhat -c \
   desc "generate MacOS pkg package."
   task :mac_pkg do
     raise(NotImplementedError, 'Mac packages must be built on MacOS') unless os_family == 'MacOS'
-    sh 'echo "hello"'
+
+    source_bin = File.join ARTIFACTS_PATH, "pkg", "darwin/amd64"
+    staging_path = File.join ARTIFACTS_PATH, "tmp", "macos/10.11"
+    pkg_path = File.join ARTIFACTS_PATH, "pkg/os/macos/10.11"
+
+    directories = %w{
+      /etc/snap
+      /etc/snap/keyrings
+      /usr/local/bin
+      /opt/snap/bin
+      /opt/snap/plugins
+      /opt/snap/share/man/man1
+      /opt/snap/share/man/man5
+      /opt/snap/share/man/man8
+    }
+
+    symlinks = {
+      "/usr/local/bin/snapd" => "/opt/snap/bin/snapd",
+      "/usr/local/bin/snapctl" => "/opt/snap/bin/snapctl",
+    }
+
+    directories.each do |dir|
+      FileUtils.mkdir_p(File.join staging_path, dir)
+    end
+
+    symlinks.each do |symlink, target|
+      link = File.join staging_path, symlink
+      FileUtils.ln_s target, link unless File.symlink? link
+    end
+
+    staging_bin = File.join staging_path, "opt/snap/bin"
+    snapd_bin = File.join source_bin, "snapd"
+    snapctl_bin = File.join source_bin, "snapctl"
+
+    files_exists? snapd_bin, snapctl_bin
+    FileUtils.cp snapd_bin, staging_bin
+    FileUtils.cp snapctl_bin, staging_bin
+
+    FileUtils.cp File.join(SUPPORT_PATH, "snapd.conf.yaml"), File.join(staging_path, "/etc/snap")
+
+    examples_path = File.join ARTIFACTS_PATH, 'src', 'github.com/intelsdi-x/snap/examples'
+    FileUtils.cp_r examples_path, File.join(staging_path, "opt/snap/") if File.directory? examples_path
+
+    Bundler.with_clean_env do
+      sh %(
+fpm \
+-t osxpkg -s dir -f \
+-C #{staging_path} \
+-p #{pkg_path} \
+-n "snap" -v "0.13.0" \
+--license "Apache-2.0" \
+-m nan.liu@intel.com \
+--url http://intelsdi-x.github.io/snap/ \
+--vendor "Intel SDI-X" \
+--description "snap is a framework for enabling the gathering of telemetry from systems." \
+--osxpkg-identifier-prefix com.intel.pkg \
+./
+      )
+    end
   end
 
   task :mac_dmg => [:mac_pkg] do
