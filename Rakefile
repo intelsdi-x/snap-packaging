@@ -309,7 +309,7 @@ vagrant ssh debian -c \
     end
   end
 
-  desc "build Ubuntu Xenial (16.04) packages"
+  desc "build Ubuntu Trusty (14.04) packages"
   task :ubuntu_1404 do
     source_bin = File.join ARTIFACTS_PATH, "pkg", "linux/amd64"
     staging_path = File.join ARTIFACTS_PATH, "tmp", "ubuntu/1404"

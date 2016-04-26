@@ -37,7 +37,7 @@ rake package:macos        # build all supported MacOS packages
 rake package:redhat       # build all RedHat RPM packages
 rake package:redhat_6     # build RedHat 6 RPM Packages
 rake package:redhat_7     # build RedHat 7 RPM packages
-rake package:ubuntu_1404  # build Ubuntu Xenial (16.04) packages
+rake package:ubuntu_1404  # build Ubuntu Trusty (14.04) packages
 rake package:ubuntu_1604  # build Ubuntu Xenial (16.04) packages
 rake setup:artifacts      # create artifacts folders
 rake setup:go             # setup GOPATH:PATH and install godep/gox
