@@ -1,0 +1,109 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          snapd
+# Required-Start:    $network $named $syslog
+# Required-Stop:     $network $named $syslog
+# Should-Start:      snapd
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+### END INIT INFO
+
+DAEMON="/usr/bin/snapd"
+DAEMON_OPTS="--config /etc/snap/snapd.conf.yaml"
+NAME="snapd"
+PROCNAME="snapd"
+DESC="Snap is a framework for gathering telemetry from systems."
+PIDFILE="/var/run/snapd.pid"
+
+test -x $DAEMON || exit 0
+
+[ -r /etc/default/snapd ] && . /etc/default/snapd
+
+. /lib/lsb/init-functions
+
+start_snapd() {
+    #start-stop-daemon --start --quiet --pidfile $PIDFILE --startas $DAEMON -- $DAEMON_OPTS
+    $DAEMON $DAEMON_OPTS > /dev/null 2>&1 &
+    PID=$!
+    RETVAL=$?
+    [ $RETVAL = 0 ] && echo $PID > ${PIDFILE}
+    return $RETVAL
+}
+
+stop_snapd() {
+    start-stop-daemon --stop --retry TERM/10/KILL/5 --quiet --oknodo --pidfile $PIDFILE --name $PROCNAME
+    rm -f "$PIDFILE"
+}
+
+restart_snapd() {
+    log_begin_msg "Restarting $DESC"
+    stop_snapd
+    start_snapd
+    log_end_msg $?
+}
+
+status_snapd() {
+    if (type status_of_proc > /dev/null 2>&1) ; then
+        status_of_proc -p "${PIDFILE}" "${DAEMON}" "${NAME}"
+    else
+        status_of_proc() {
+            local pidfile daemon name status
+
+            pidfile=
+            OPTIND=1
+            while getopts p: opt ; do
+                case "$opt" in
+                    p)  pidfile="$OPTARG";;
+                esac
+            done
+            shift $(($OPTIND - 1))
+
+            if [ -n "$pidfile" ]; then
+                pidfile="-p $pidfile"
+            fi
+            daemon="$1"
+            name="$2"
+            status="0"
+            pidofproc $pidfile $daemon >/dev/null || status="$?"
+            if [ "$status" = 0 ]; then
+                log_success_msg "$name is running"
+                return 0
+            elif [ "$status" = 4 ]; then
+                log_failure_msg "could not access PID file for $name"
+                return $status
+            else
+                log_failure_msg "$name is not running"
+                return $status
+            fi
+        }
+        status_of_proc -p "${PIDFILE}" "${DAEMON}" "${NAME}"
+    fi
+}
+
+case "$1" in
+    start)
+        log_begin_msg "Starting $DESC"
+        start_snapd
+        log_end_msg $?
+    ;;
+    stop)
+        log_begin_msg "Stopping $DESC"
+        stop_snapd
+        log_end_msg $?
+    ;;
+    status)
+        status_snapd
+    ;;
+    restart|force-reload)
+        restart_snapd
+    ;;
+    condrestart)
+        if status_snapd >/dev/null 2>&1; then
+            restart_snapd
+        fi
+    ;;
+    *)
+        echo "Usage: $0 {start|stop|status|restart|condrestart}" >&2
+        exit 1
+    ;;
+esac

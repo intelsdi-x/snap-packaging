@@ -31,7 +31,7 @@ Vagrant.configure(2) do |config|
 
   # NOTE: test boxes obtained from https://atlas.hashicorp.com/boxcutter
   # packer build source repo: https://github.com/boxcutter
-  operating_systems = %w{ centos67 centos72 ubuntu1604 }
+  operating_systems = %w{ centos67 centos72 ubuntu1604 ubuntu1404 }
 
   operating_systems.each do |os|
     config.vm.define os do |system|

@@ -1,13 +1,13 @@
 # NOTE: Using rake instead of writing a shell script because Ruby seems
 # unavoidable between FPM and homebrew.
 
-require "fpm"
-require "fpm/rake_task"
 require "rake"
 require "fileutils"
+require "fpm"
+require "fpm/rake_task"
+require "hashie"
 require "pathname"
 require "yaml"
-
 begin
   require "pry"
 rescue LoadError
@@ -30,6 +30,7 @@ GO_VERSION = "1.6.1"
 PROJECT_PATH = Pathname.new(__FILE__).parent
 SUPPORT_PATH = File.join PROJECT_PATH, "support"
 ARTIFACTS_PATH = File.join PROJECT_PATH, "artifacts"
+
 
 desc "Show the list of Rake tasks (rake -T)"
 task :help do
@@ -237,11 +238,156 @@ gox \
     end
   end
 
+  desc "generate all Debian deb packages."
+  task :debian => [:ubuntu_1604, :ubuntu_1404]
+
+  desc "generate Ubuntu Xenial (16.04) packages"
+  task :ubuntu_1604 do
+    source_bin = File.join ARTIFACTS_PATH, "pkg", "linux/amd64"
+    staging_path = File.join ARTIFACTS_PATH, "tmp", "ubuntu/1604"
+    rel_staging_path = "/artifacts/tmp/ubuntu/1604"
+    pkg_path = "/artifacts/pkg/os/ubuntu/1604"
+
+    directories = %w{
+      /etc/snap
+      /etc/snap/keyrings
+      /lib/systemd/system
+      /usr/bin
+      /opt/snap/bin
+      /opt/snap/plugins
+      /opt/snap/share/man/man1
+      /opt/snap/share/man/man5
+      /opt/snap/share/man/man8
+    }
+
+    symlinks = {
+      "/usr/bin/snapd" => "/opt/snap/bin/snapd",
+      "/usr/bin/snapctl" => "/opt/snap/bin/snapctl",
+    }
+
+    directories.each do |dir|
+      FileUtils.mkdir_p(File.join staging_path, dir)
+    end
+
+    symlinks.each do |symlink, target|
+      link = File.join staging_path, symlink
+      FileUtils.ln_s target, link unless File.symlink? link
+    end
+
+    staging_bin = File.join staging_path, "opt/snap/bin"
+    snapd_bin = File.join source_bin, "snapd"
+    snapctl_bin = File.join source_bin, "snapctl"
+
+    files_exists? snapd_bin, snapctl_bin
+    FileUtils.cp snapd_bin, staging_bin
+    FileUtils.cp snapctl_bin, staging_bin
+
+    FileUtils.cp File.join(SUPPORT_PATH, "snapd.conf.yaml"), File.join(staging_path, "/etc/snap")
+    FileUtils.cp File.join(SUPPORT_PATH, "snapd.service"), File.join(staging_path, "/lib/systemd/system")
+
+    examples_path = File.join ARTIFACTS_PATH, 'src', 'github.com/intelsdi-x/snap/examples'
+    FileUtils.cp_r examples_path, File.join(staging_path, "opt/snap/") if File.directory? examples_path
+
+    FileUtils.cp snapctl_bin, staging_bin
+
+    # NOTE: wrapping because how vagrant is packaged:
+    # https://github.com/mitchellh/vagrant/issues/6158#issuecomment-153507010
+    Bundler.with_clean_env do
+      sh %(
+vagrant ssh debian -c \
+  'fpm \
+  -t deb -s dir -f\
+  -C #{rel_staging_path} \
+  -p #{pkg_path} \
+  -n "snap" -v "0.13.0" \
+  -m nan.liu@intel.com \
+  --license "Apache-2.0" \
+  --vendor "Intel SDI-X" \
+  --url http://intelsdi-x.github.io/snap/ \
+  --description "snap is a framework for enabling the gathering of telemetry from systems." \
+  --config-files "/etc/snap" \
+  ./ '
+      )
+    end
+  end
+
+  desc "generate Ubuntu Xenial (16.04) packages"
+  task :ubuntu_1404 do
+    source_bin = File.join ARTIFACTS_PATH, "pkg", "linux/amd64"
+    staging_path = File.join ARTIFACTS_PATH, "tmp", "ubuntu/1404"
+    rel_staging_path = "/artifacts/tmp/ubuntu/1404"
+    pkg_path = "/artifacts/pkg/os/ubuntu/1404"
+
+    FileUtils.mkdir_p(File.join ARTIFACTS_PATH, "pkg/os/ubuntu/1404")
+
+    directories = %w{
+      /etc/snap
+      /etc/snap/keyrings
+      /etc/init.d/
+      /usr/bin
+      /opt/snap/bin
+      /opt/snap/plugins
+      /opt/snap/share/man/man1
+      /opt/snap/share/man/man5
+      /opt/snap/share/man/man8
+    }
+
+    symlinks = {
+      "/usr/bin/snapd" => "/opt/snap/bin/snapd",
+      "/usr/bin/snapctl" => "/opt/snap/bin/snapctl",
+    }
+
+    directories.each do |dir|
+      FileUtils.mkdir_p(File.join staging_path, dir)
+    end
+
+    symlinks.each do |symlink, target|
+      link = File.join staging_path, symlink
+      FileUtils.ln_s target, link unless File.symlink? link
+    end
+
+    staging_bin = File.join staging_path, "opt/snap/bin"
+    snapd_bin = File.join source_bin, "snapd"
+    snapctl_bin = File.join source_bin, "snapctl"
+
+    files_exists? snapd_bin, snapctl_bin
+    FileUtils.cp snapd_bin, staging_bin
+    FileUtils.cp snapctl_bin, staging_bin
+
+    FileUtils.cp File.join(SUPPORT_PATH, "snapd.conf.yaml"), File.join(staging_path, "/etc/snap")
+    FileUtils.cp File.join(SUPPORT_PATH, "snapd.deb.initd"), File.join(staging_path, "/etc/init.d/snapd")
+
+    examples_path = File.join ARTIFACTS_PATH, 'src', 'github.com/intelsdi-x/snap/examples'
+    FileUtils.cp_r examples_path, File.join(staging_path, "opt/snap/") if File.directory? examples_path
+
+    FileUtils.cp snapctl_bin, staging_bin
+
+    # NOTE: wrapping because how vagrant is packaged:
+    # https://github.com/mitchellh/vagrant/issues/6158#issuecomment-153507010
+    Bundler.with_clean_env do
+      sh %(
+vagrant ssh debian -c \
+  'fpm \
+  -t deb -s dir -f\
+  -C #{rel_staging_path} \
+  -p #{pkg_path} \
+  -n "snap" -v "0.13.0" \
+  -m nan.liu@intel.com \
+  --license "Apache-2.0" \
+  --vendor "Intel SDI-X" \
+  --url http://intelsdi-x.github.io/snap/ \
+  --description "snap is a framework for enabling the gathering of telemetry from systems." \
+  --config-files "/etc/snap" \
+  ./ '
+      )
+    end
+  end
+
   desc "generate all RedHat RPM packages"
   task :redhat => [:redhat_7, :redhat_6]
 
   # NOTE: systemd service script
-  desc "generate RedHat 7 RPM Packages"
+  desc "generate RedHat 7 RPM packages"
   task :redhat_7 do
     source_bin = File.join ARTIFACTS_PATH, "pkg", "linux/amd64"
     staging_path = File.join ARTIFACTS_PATH, "tmp", "redhat/7"
@@ -355,7 +501,7 @@ vagrant ssh redhat -c \
     FileUtils.cp snapctl_bin, staging_bin
 
     FileUtils.cp File.join(SUPPORT_PATH, "snapd.conf.yaml"), File.join(staging_path, "/etc/snap")
-    FileUtils.cp File.join(SUPPORT_PATH, "snapd.initd"), File.join(staging_path, "/etc/rc.d/init.d/snapd")
+    FileUtils.cp File.join(SUPPORT_PATH, "snapd.rh.initd"), File.join(staging_path, "/etc/rc.d/init.d/snapd")
     FileUtils.cp File.join(SUPPORT_PATH, "snapd.sysconfig"), File.join(staging_path, "/etc/sysconfig/snapd")
 
     examples_path = File.join ARTIFACTS_PATH, 'src', 'github.com/intelsdi-x/snap/examples'
