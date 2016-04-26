@@ -191,7 +191,7 @@ def files_exists?(*files)
 end
 
 namespace :package do
-  desc "build go binary"
+  desc "compile snap go binary"
   task :go do
     snap_repo = Metadata::Git.new "snap", "https://github.com/intelsdi-x/snap.git"
     begin
@@ -238,10 +238,10 @@ gox \
     end
   end
 
-  desc "generate all Debian deb packages."
+  desc "build all Debian deb packages."
   task :debian => [:ubuntu_1604, :ubuntu_1404]
 
-  desc "generate Ubuntu Xenial (16.04) packages"
+  desc "build Ubuntu Xenial (16.04) packages"
   task :ubuntu_1604 do
     source_bin = File.join ARTIFACTS_PATH, "pkg", "linux/amd64"
     staging_path = File.join ARTIFACTS_PATH, "tmp", "ubuntu/1604"
@@ -309,7 +309,7 @@ vagrant ssh debian -c \
     end
   end
 
-  desc "generate Ubuntu Xenial (16.04) packages"
+  desc "build Ubuntu Xenial (16.04) packages"
   task :ubuntu_1404 do
     source_bin = File.join ARTIFACTS_PATH, "pkg", "linux/amd64"
     staging_path = File.join ARTIFACTS_PATH, "tmp", "ubuntu/1404"
@@ -379,11 +379,11 @@ vagrant ssh debian -c \
     end
   end
 
-  desc "generate all RedHat RPM packages"
+  desc "build all RedHat RPM packages"
   task :redhat => [:redhat_7, :redhat_6]
 
   # NOTE: systemd service script
-  desc "generate RedHat 7 RPM packages"
+  desc "build RedHat 7 RPM packages"
   task :redhat_7 do
     source_bin = File.join ARTIFACTS_PATH, "pkg", "linux/amd64"
     staging_path = File.join ARTIFACTS_PATH, "tmp", "redhat/7"
@@ -452,7 +452,7 @@ vagrant ssh redhat -c \
   end
 
   # NOTE: init.d service script
-  desc "generate RedHat 6 RPM Packages"
+  desc "build RedHat 6 RPM Packages"
   task :redhat_6 do
     source_bin = File.join ARTIFACTS_PATH, "pkg", "linux/amd64"
     staging_path = File.join ARTIFACTS_PATH, "tmp", "redhat/6"
@@ -523,12 +523,12 @@ vagrant ssh redhat -c \
   end
 
   # NOTE: no fink/macports
-  desc "generate all supported MacOS packages."
+  desc "build all supported MacOS packages."
   task :macos => [:mac_dmg, :homebrew]
 
   # NOTE: essentially running
   # fpm -s dir -t osxpkg -n "snap" -v v0.13.0 --prefix /opt --license "Apache-2.0" -m nan.liu@intel.com --url http://intelsdi-x.github.io/snap/ --description "snap is a framework for enabling the gathering of telemetry from systems." --osxpkg-identifier-prefix com.intel.pkg ./snap-v0.13.0-beta
-  desc "generate MacOS pkg package."
+  desc "build MacOS pkg package."
   task :mac_pkg do
     raise(NotImplementedError, 'Mac packages must be built on MacOS') unless os_family == 'MacOS'
 
