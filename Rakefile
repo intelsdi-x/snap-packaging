@@ -298,6 +298,7 @@ vagrant ssh debian -c \
   -C #{rel_staging_path} \
   -p #{pkg_path} \
   -n "snap" -v "0.13.0" \
+  --iteration '1xenial' \
   -m nan.liu@intel.com \
   --license "Apache-2.0" \
   --vendor "Intel SDI-X" \
@@ -368,6 +369,7 @@ vagrant ssh debian -c \
   -C #{rel_staging_path} \
   -p #{pkg_path} \
   -n "snap" -v "0.13.0" \
+  --iteration '1trusty' \
   -m nan.liu@intel.com \
   --license "Apache-2.0" \
   --vendor "Intel SDI-X" \
@@ -440,6 +442,7 @@ vagrant ssh redhat -c \
   -C #{rel_staging_path} \
   -p #{pkg_path} \
   -n "snap" -v "0.13.0" \
+  --iteration '1.el7' \
   -m nan.liu@intel.com \
   --license "Apache-2.0" \
   --vendor "Intel SDI-X" \
@@ -511,6 +514,7 @@ vagrant ssh redhat -c \
   -C #{rel_staging_path} \
   -p #{pkg_path} \
   -n "snap" -v "0.13.0" \
+  --iteration '1.el6' \
   -m nan.liu@intel.com \
   --license "Apache-2.0" \
   --vendor "Intel SDI-X" \
@@ -596,5 +600,52 @@ fpm \
   end
 
   task :homebrew do
+  end
+end
+
+def bintray_config(conf_file = File.join(ENV['HOME'], '.bintray') )
+  raise ArgumentError, "Missing #{conf_file}" unless File.exists? conf_file
+  @config ||= YAML.load_file(conf_file)
+end
+
+def upload_bintray(file, folder = '', dist = '')
+  username = bintray_config['username']
+  apikey = bintray_config['apikey']
+
+  file_path = Pathname.new file
+  file_name = file_path.basename
+  file_type = file_name.extname
+
+  package_name = 'snap'
+  version_name = '0.13.0'
+
+  case file_type
+  when '.rpm'
+    repo = 'rpm'
+    sh %(
+curl -T #{file_path} -u#{username}:#{apikey} https://api.bintray.com/content/#{username}/#{repo}/#{package_name}/#{version_name}/#{folder}#{file_name}
+    )
+  when '.deb'
+    repo = 'deb'
+    sh %(
+curl -T #{file_path} -u#{username}:#{apikey} https://api.bintray.com/content/#{username}/#{repo}/#{package_name}/#{version_name}/#{folder}#{file_name}\;deb_distribution\=#{dist}\;deb_component\=main\;deb_architecture\=amd64
+    )
+  else
+    'file'
+  end
+end
+
+namespace :upload do
+  desc "upload packages to AWS s3"
+  task :s3 do
+    sh "aws s3 cp --recursive --exclude '*.DS_Store' ./artifacts/pkg/os/ s3://sdinan/packages"
+  end
+
+  desc "upload packages to Bintray"
+  task :bintray do
+    upload_bintray('artifacts/pkg/os/redhat/7/snap-0.13.0-1.el7.x86_64.rpm', 'el/7/')
+    upload_bintray('artifacts/pkg/os/redhat/6/snap-0.13.0-1.el6.x86_64.rpm', 'el/6/')
+    upload_bintray('artifacts/pkg/os/ubuntu/1604/snap_0.13.0-1xenial_amd64.deb', '', 'xenial')
+    upload_bintray('artifacts/pkg/os/ubuntu/1404/snap_0.13.0-1trusty_amd64.deb', '', 'trusty')
   end
 end
