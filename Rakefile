@@ -2,12 +2,13 @@
 # unavoidable between FPM and homebrew.
 
 require "rake"
+require "rake/testtask"
 require "fileutils"
 require "fpm"
 require "fpm/rake_task"
-require "hashie"
 require "pathname"
 require "yaml"
+
 begin
   require "pry"
 rescue LoadError
@@ -38,8 +39,11 @@ task :help do
 end
 task :default => :help
 
-# Custom Exceptions:
-class UnsupportedOSError < NotImplementedError; end
+Rake::TestTask.new do |t|
+  t.libs << "test"
+  t.test_files = FileList['test/test*.rb']
+  t.verbose = true
+end
 
 def os_family
   output = %x{uname -a}
@@ -647,5 +651,9 @@ namespace :upload do
     upload_bintray('artifacts/pkg/os/redhat/6/snap-0.13.0-1.el6.x86_64.rpm', 'el/6/')
     upload_bintray('artifacts/pkg/os/ubuntu/1604/snap_0.13.0-1xenial_amd64.deb', '', 'xenial')
     upload_bintray('artifacts/pkg/os/ubuntu/1404/snap_0.13.0-1trusty_amd64.deb', '', 'trusty')
+  end
+
+  desc "upload packages to PackageCloud.io"
+  task :packagecloud do
   end
 end
