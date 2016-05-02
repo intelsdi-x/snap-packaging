@@ -101,6 +101,5 @@ module Packaging
         yield file_path.to_s, file_name, file_type, os_path
       end
     end
-
   end
 end

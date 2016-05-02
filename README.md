@@ -29,18 +29,22 @@ Recommend bundle path as .bundle and appropriate binstub to avoid `bundle exec r
 $ bundle install --binstubs
 $ rake
 rake -T
+rake build:go_binary      # compile snap go binary
 rake help                 # Show the list of Rake tasks (rake -T)
 rake package:debian       # build all Debian deb packages
-rake package:go           # compile snap go binary
 rake package:mac_pkg      # build MacOS pkg package
 rake package:macos        # build all supported MacOS packages
 rake package:redhat       # build all RedHat RPM packages
-rake package:redhat_6     # build RedHat 6 RPM Packages
+rake package:redhat_6     # build RedHat 6 RPM packages
 rake package:redhat_7     # build RedHat 7 RPM packages
 rake package:ubuntu_1404  # build Ubuntu Trusty (14.04) packages
 rake package:ubuntu_1604  # build Ubuntu Xenial (16.04) packages
 rake setup:artifacts      # create artifacts folders
-rake setup:go             # setup GOPATH:PATH and install godep/gox
+rake setup:godep          # install godep/gox
+rake test                 # Run tests
+rake upload:bintray       # upload packages to Bintray
+rake upload:packagecloud  # upload packages to PackageCloud.io
+rake upload:s3            # upload packages to AWS s3
 ```
 
 ### Github OAuth
