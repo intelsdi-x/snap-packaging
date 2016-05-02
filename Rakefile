@@ -10,6 +10,11 @@ begin
 rescue LoadError
 end
 
+#Packaging::Github.new "intelsdi-x/snap-plugin-collector-apache"
+#Packaging::Github.new "intelsdi-x/snap-plugin-collector-facter"
+
+require_relative 'lib/packaging/plugins'
+
 GO_VERSION = "1.6.1"
 
 @config = Packaging.config
@@ -91,8 +96,8 @@ gox \
 end
 
 namespace :package do
-  desc "build all Debian deb packages."
-  task :debian => [:ubuntu_1604, :ubuntu_1404]
+  desc "build all Ubuntu deb packages."
+  task :ubuntu => [:ubuntu_1604, :ubuntu_1404]
 
   desc "build Ubuntu Xenial (16.04) packages"
   task :ubuntu_1604 do
@@ -187,6 +192,7 @@ namespace :package do
 
     # MacOS El Capitan System Integrity Protection prevents packages from deploying to /usr/bin
     plat.bin = "/usr/local/bin"
+
     plat.prep_package
 
     plat.fpm_options = "--osxpkg-identifier-prefix com.intel.pkg"
@@ -197,7 +203,6 @@ namespace :package do
   task :homebrew do
   end
 end
-
 
 namespace :upload do
   desc "upload packages to AWS s3"
@@ -213,5 +218,12 @@ namespace :upload do
   desc "upload packages to PackageCloud.io"
   task :packagecloud do
     Packaging::Upload.packagecloud @snap
+  end
+end
+
+namespace :plugin do
+  desc "generate plugin metadata"
+  task :metadata do
+    Packaging::Plugins.metadata
   end
 end

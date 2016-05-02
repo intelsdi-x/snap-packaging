@@ -9,6 +9,7 @@ module Packaging
   require 'packaging/config'
   require 'packaging/project'
   require 'packaging/platform'
+  require 'packaging/github'
   require 'packaging/gitrepo'
   require 'packaging/upload'
 

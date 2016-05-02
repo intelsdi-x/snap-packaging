@@ -1,11 +1,20 @@
+require 'netrc'
 require 'octokit'
 
 module Packaging
   class Github
-    def initialize(repo)
-      enable_http_cache
+    @@client = Octokit::Client.new(:netrc => true) if File.exists? File.join(ENV["HOME"], ".netrc")
 
-      @repo = Octokit.repo repo
+    def initialize
+      enable_http_cache
+    end
+
+    def repo name
+      if @@client
+        @@client.repo name
+      else
+        Octokit.repo name
+      end
     end
 
     def enable_http_cache
@@ -18,15 +27,6 @@ module Packaging
 
       Octokit.middleware = stack
     rescue LoadError
-    end
-
-    def enable_netrc
-      netrc_file = File.join(ENV['HOME'], '.netrc')
-      if File.exists? netrc_file
-        require 'netrc'
-        @client = Octokit::Client.new(:netrc => true)
-        @client.login
-      end
     end
   end
 end
