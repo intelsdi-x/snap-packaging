@@ -11,7 +11,8 @@ module Packaging
 
     attr_accessor :config
 
-    attr_accessor :s3_repo
+    attr_accessor :s3_url
+    attr_accessor :bintray_repo_url
 
     def initialize(name, &block)
       @name = name

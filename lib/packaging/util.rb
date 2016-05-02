@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'json'
 require 'semantic'
 require 'yaml'
 
@@ -28,6 +29,15 @@ module Packaging
 
     def self.valid_symlink? source, target
       File.symlink?(source) && File.readlink(source) == target
+    end
+
+    ##
+    # load json configuration file
+
+    def self.load_json file
+      file = File.expand_path file
+      raise ArgumentError, "Invalid yaml file path: #{file}" unless File.exist? file
+      JSON.load_file file
     end
 
     ##
