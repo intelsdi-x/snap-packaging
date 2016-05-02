@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 
 group :development do
+  gem "minitest"
   gem "pry"
 end
 
@@ -10,6 +11,7 @@ gem "git"
 gem "hashie", "~>3.4"
 gem "netrc"
 gem "octokit"
+gem "package_cloud"
 gem "rake", "~>11.1"
 gem "semantic"
 #gem "rugged"
