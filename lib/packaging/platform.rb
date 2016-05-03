@@ -12,7 +12,6 @@ module Packaging
     attr_accessor :opt
     attr_accessor :man
     attr_accessor :service
-    attr_accessor :service_dir
     attr_accessor :service_files
     attr_accessor :build_vm
     attr_accessor :package_format
@@ -29,7 +28,7 @@ module Packaging
       @etc = "/etc"
       @log = "/var/log"
       @opt = "/opt"
-      @man = File.join @opt, @project.name, "share/man"
+      @man = "/usr/share/man"
       @service_files = []
     end
 
@@ -52,13 +51,9 @@ module Packaging
         @bin,
         File.join(@etc, name),
         File.join(@etc, name, 'keyrings'),
-        @service_dir,
         File.join(@log, name),
         File.join(@opt, name, '/bin'),
         File.join(@opt, name, '/plugins'),
-        File.join(@man, 'man1'),
-        File.join(@man, 'man5'),
-        File.join(@man, 'man8'),
       ].flatten.uniq.compact
     end
 
@@ -93,8 +88,10 @@ module Packaging
       mandocs.each do |file|
         man_page = File.basename file, '.mdoc'
         section = man_page[-1]
-        man_path = File.join tmp_path, @man, "man#{section}", man_page
+        section_path = File.join tmp_path, @man, "man#{section}"
+        man_path = File.join section_path, man_page
 
+        Packaging::Util.mkdir_p section_path
         Packaging::Util.working_dir do
           `mandoc -Tman #{file} > #{man_path}`
         end
@@ -105,6 +102,9 @@ module Packaging
       @service_files.each do |file, conf_dir|
         source = File.join @config.support_path, file
         target = File.join tmp_path, conf_dir
+
+        target_dir = Pathname.new(target).parent
+        Packaging::Util.mkdir_p target_dir
 
         FileUtils.cp source, target
       end

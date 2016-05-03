@@ -111,7 +111,6 @@ namespace :package do
     plat.build_vm = "debian"
 
     plat.service = "systemd"
-    plat.service_dir = "/lib/systemd/system"
     plat.service_files = {
       "snapd.service" => "/lib/systemd/system/snapd.service",
     }
@@ -132,7 +131,6 @@ namespace :package do
     plat.build_vm = "debian"
 
     plat.service = "initd"
-    plat.service_dir = "/etc/init.d"
     plat.service_files = {
       "snapd.deb.initd" => "/etc/init.d/snapd",
     }
@@ -156,7 +154,6 @@ namespace :package do
     plat.build_vm = "redhat"
 
     plat.service = "systemd"
-    plat.service_dir = "/usr/lib/systemd/system"
     plat.service_files = {
       "snapd.service" => "/usr/lib/systemd/system/snapd.service",
     }
@@ -177,10 +174,6 @@ namespace :package do
     plat.build_vm = "redhat"
 
     plat.service = "initd"
-    plat.service_dir = [
-      "/etc/rc.d/init.d/",
-      "/etc/sysconfig/",
-    ]
     plat.service_files = {
       "snapd.rh.initd" => "/etc/rc.d/init.d/snapd",
       "snapd.sysconfig" => "/etc/sysconfig/snapd",
