@@ -1,0 +1,120 @@
+.Dd May 1, 2016
+.Dt SNAPD 8
+.Os Intel SDI-X
+.Sh NAME
+.Nm snapd
+.Nd A powerful telemetry framework
+.Sh SYNOPSIS
+.Nm snapd
+.Op arguments
+.Sh DESCRIPTION
+This document describes
+.Nm snapd
+(Snap Daemon), the daemon program for snap telemetry framework.
+.Pp
+The options are as follows:
+
+.Bl -tag -width "PAGEIN" -compact
+.It Ar --api-port, -p port_number
+API port (default: 8181)
+.It Ar --auto-discover, -a path[:<additional_path>]
+Auto discovery paths, separate multiple path by colons.
+.It Ar --cache-expiration seconds
+The time limit a metric cache entry is valid
+.It Ar --config config_file
+Specify snapd config file path
+.It Ar --disable-api, -d
+Disable the REST API
+.It Ar --keyring-paths, -k keyring_path[:<additional_path>]
+Keyring folder path containing signing verification separated by colons
+.It Ar --log-level, -l [1-5]
+Log level, 1-5 (Debug, Info, Warning, Error, Fatal)
+.It Ar --log-path, -o log_file
+Log file path (default: stdout when log-path is empty)
+.It Ar --max-procs, -c num_cores
+Maximum cores to use for snapd (default: 1)
+.It Ar --max-running-plugins, -m number_plugins
+The maximum number of running plugins
+.It Ar --plugin-trust, -t level
+Plugin trust level 0-2 (Disabled, Enabled, Warning)
+.It Ar --rest-auth
+Enables snapd REST API authentication
+.It Ar --rest-cert cert_file
+A path to a certificate to use for HTTPS deployment of snap's REST API
+.It Ar --rest-key key_file
+Path to a key file to use (for snapd HTTPS REST API)
+.It Ar --rest-https
+Use HTTPS for snapd REST API
+.It Ar --tribe
+Enable tribe mode
+.It Ar --tribe-addr ipaddress
+Addr tribe gossips over to maintain membership
+.It Ar --tribe-node-name hostname
+Name of this node in tribe cluster (default: hostname)
+.It Ar --tribe-port port_number
+Tribe gossip port to maintain membership
+.It Ar --tribe-seed ipaddress:port
+IP (or hostname) and port of a node to join (e.g. 127.0.0.1:6000)
+.It Ar --work-manager-pool-size size
+Size of the work manager pool (default 4)
+.It Ar --work-manager-queue-size size
+Size of the work manager queue (default: 25)
+.It Ar --help, -h
+Show help
+.It Ar --version, -v
+Show snapd version
+.El
+.Sh ENVIRONMENT
+.Nm snapd
+supports the following evnironment variables:
+
+.Bl -tag -compact
+.It SNAP_AUTODISCOVER_PATH
+See snapd --auto-discover
+.It SNAP_CACHE_EXPIRATION
+See snapd --cache-expiration
+.It SNAP_CONFIG_PATH
+See snapd --config
+.It SNAP_KEYRING_PATHS
+See snapd --keyring-paths
+.It SNAP_LOG_LEVEL
+See snapd --log-level
+.It SNAP_LOG_PATH
+See snapd --log-path
+.It SNAP_MAX_PLUGINS
+See snapd --max-running-plugins
+.It SNAP_TRIBE
+See snapd --tribe
+.It SNAP_TRIBE_ADDR
+See snapd --tribe-addr
+.It SNAP_TRIBE_NODE_NAME
+See snapd --tribe-node-name
+.It SNAP_TRIBE_PORT
+See snapd --trip-port
+.It SNAP_TRIBE_SEED
+See snapd --tribe-seed
+.It SNAP_TRUST_LEVEL
+See snapd --plugin-trust
+.It WORK_MANAGER_POOL_SIZE
+See snapd --work-manager-pool-size
+.It WORK_MANAGER_QUEUE_SIZE
+See snapd --work-manager-queue-size
+.El
+
+.Sh FILES
+.Bl -tag -width "PAGEIN" -compact
+.It Pa /etc/snap/snapd.conf
+snap daemon configuration file. see
+.Xr snapd_config 5 .
+
+.It Pa /etc/snap/keyrings
+snapd keyring directory. see
+.Xr snapd_config 5 .
+
+.It Pa /var/log/snap/snapd.log
+snapd log file.
+
+.El
+.Sh SEE ALSO
+.Xr snapctl 1 ,
+.Xr snapd_config 5

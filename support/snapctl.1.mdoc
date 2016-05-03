@@ -1,0 +1,103 @@
+.Dd May 1, 2016
+.Dt SNAPCTL 1
+.Os Intel SDI-X
+.Sh NAME
+.Nm snapctl
+.Nd A powerful telemetry framework
+.Sh SYNOPSIS
+.Nm snapctl
+.Op global options
+.Ar command
+.Op command options
+.Sh DESCRIPTION
+This document describes
+.Nm snapctl, the command line tool for managing snap telemetry framework.
+.Pp
+The global options are as follows:
+
+.Bl -tag -width "PAGEIN" -compact
+.It Ar --api-version, -a version
+The snapd API version
+.It Ar --config, -c config_file
+Path to the snapctl config file
+.It Ar --insecure
+Ignore certificate errors when connecting to HTTPS REST URL
+.It Ar --password, -p password
+Password for REST API authentication
+.It Ar --url, -u url
+Specify the snapd REST URL to use (e.g. http://localhost:8181)
+.It Ar --help, -h
+Show help
+.It Ar --version, -v
+Show snapd version
+.El
+
+The commands are as follows:
+
+.Bl -tag -width "PAGEIN" -compact
+.It Ar agreement
+Only when tribe mode is enabled.
+.It Ar member
+Only when tribe mode is enabled.
+.It Ar metric
+.It Ar plugin
+.It Ar plugin-config
+Only when tribe mode is enabled.
+.It Ar task
+.El
+.Sh COMMANDS
+.Nm snapctl plugin
+.Ar commands:
+.Pp
+.Bl -tag -width "PAGEIN" -compact
+.It Ar load [plugin_path]
+load plugin in snapd
+.It Ar upload [plugin_type:plugin_name:plugin_version]
+unload plugin from snapd
+.It Ar list
+list loaded snapd plugins
+.El
+
+.Nm snapctl metric
+.Ar commands:
+.Pp
+.Bl -tag -width "PAGEIN" -compact
+.It Ar get [metric]
+get details on a specific metric
+.It Ar list
+list available metrics
+.El
+
+.Nm snapctl task
+.Ar commands:
+.Pp
+.Bl -tag -width "PAGEIN" -compact
+.It Ar enable [task_id]
+enable task
+.It Ar export [task_id]
+export task
+.It Ar list
+list loaded tasks
+.It Ar remove [task_id]
+remove task
+.It Ar start [task_id]
+start task
+.It Ar stop [task_id]
+stop task
+.It Ar watch [task_id]
+watch task
+.El
+
+.Sh ENVIRONMENT
+.Nm snapd
+supports the following evnironment variables:
+
+.Bl -tag -compact
+.It SNAP_URL
+See snapctl --url
+.It SNAPCTL_CONFIG_PATH
+See snapctl --config
+.El
+.Sh SEE ALSO
+.Xr snapd 8 ,
+.Xr snapd_config 5
