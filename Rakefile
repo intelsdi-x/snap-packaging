@@ -110,8 +110,11 @@ namespace :package do
     plat.package_iteration = "1xenial"
     plat.build_vm = "debian"
 
-    plat.service_dir = "/lib/systemd/system"
     plat.service = "systemd"
+    plat.service_dir = "/lib/systemd/system"
+    plat.service_files = {
+      "snapd.service" => "/lib/systemd/system/snapd.service",
+    }
 
     plat.prep_package
     plat.fpm
@@ -128,8 +131,11 @@ namespace :package do
     plat.package_iteration = "1trusty"
     plat.build_vm = "debian"
 
-    plat.service_dir = "/etc/init.d"
     plat.service = "initd"
+    plat.service_dir = "/etc/init.d"
+    plat.service_files = {
+      "snapd.deb.initd" => "/etc/init.d/snapd",
+    }
 
     plat.prep_package
     plat.fpm
@@ -149,8 +155,11 @@ namespace :package do
     plat.package_iteration = "1.el7"
     plat.build_vm = "redhat"
 
-    plat.service_dir = "/usr/lib/systemd/system"
     plat.service = "systemd"
+    plat.service_dir = "/usr/lib/systemd/system"
+    plat.service_files = {
+      "snapd.service" => "/usr/lib/systemd/system/snapd.service",
+    }
 
     plat.prep_package
     plat.fpm
@@ -167,8 +176,15 @@ namespace :package do
     plat.package_iteration = "1.el6"
     plat.build_vm = "redhat"
 
-    plat.service_dir = "/etc/rc.d/init.d/"
     plat.service = "initd"
+    plat.service_dir = [
+      "/etc/rc.d/init.d/",
+      "/etc/sysconfig/",
+    ]
+    plat.service_files = {
+      "snapd.rh.initd" => "/etc/rc.d/init.d/snapd",
+      "snapd.sysconfig" => "/etc/sysconfig/snapd",
+    }
 
     plat.prep_package
     plat.fpm

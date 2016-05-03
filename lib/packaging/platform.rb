@@ -13,7 +13,7 @@ module Packaging
     attr_accessor :man
     attr_accessor :service
     attr_accessor :service_dir
-    attr_accessor :service_file
+    attr_accessor :service_files
     attr_accessor :build_vm
     attr_accessor :package_format
     attr_accessor :package_iteration
@@ -25,11 +25,12 @@ module Packaging
         fail("the project #{project_name} does not exist.")
       @config = Packaging.config
 
-      @bin = '/usr/bin'
-      @etc = '/etc'
-      @log = '/var/log'
-      @opt = '/opt'
-      @man = File.join @opt, @project.name, 'share/man'
+      @bin = "/usr/bin"
+      @etc = "/etc"
+      @log = "/var/log"
+      @opt = "/opt"
+      @man = File.join @opt, @project.name, "share/man"
+      @service_files = []
     end
 
     def prep_package
@@ -58,7 +59,7 @@ module Packaging
         File.join(@man, 'man1'),
         File.join(@man, 'man5'),
         File.join(@man, 'man8'),
-      ].uniq.compact
+      ].flatten.uniq.compact
     end
 
     def create_skeleton
@@ -67,7 +68,7 @@ module Packaging
     end
 
     def package_binary
-      opt_bin = File.join tmp_path, @opt, @project.name, 'bin'
+      opt_bin = File.join tmp_path, @opt, @project.name, "bin"
       go_binary_files.each do |file|
         FileUtils.cp file, opt_bin
       end
@@ -88,21 +89,25 @@ module Packaging
     end
 
     def generate_man
-      # TODO:
+      mandocs = Dir["#{@config.support_path}/**/*.mdoc"]
+      mandocs.each do |file|
+        man_page = File.basename file, '.mdoc'
+        section = man_page[-1]
+        man_path = File.join tmp_path, @man, "man#{section}", man_page
+
+        Packaging::Util.working_dir do
+          `mandoc -Tman #{file} > #{man_path}`
+        end
+      end
     end
 
     def package_service
-      #files = if @service_file.is_a? ::Array
-      #          @service_file
-      #        elsif @service_file.is_a? ::String
-      #          [ @service_file ]
-      #        else
-      #          fail "please provide valid service files."
-      #        end
+      @service_files.each do |file, conf_dir|
+        source = File.join @config.support_path, file
+        target = File.join tmp_path, conf_dir
 
-      #binding.pry
-      #files.each do |file|
-      #end
+        FileUtils.cp source, target
+      end
     end
 
     def create_symlink

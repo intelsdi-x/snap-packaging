@@ -8,7 +8,7 @@
 # default snapd prints all logs to stdout. Any provided
 # path will send snapd logs to a file called snapd.log in
 # the provided directory.
-log_path: /var/log
+log_path: /var/log/snap
 
 # Gomaxprocs sets the number of cores to use on the system
 # for snapd to use. Default for gomaxprocs is 1
