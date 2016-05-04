@@ -72,7 +72,7 @@ namespace :build do
 
     Packaging::Util.go_build @snap.repo.dir.path do
       SUPPORTED_OSARCH.each do |osarch|
-        #sh "make deps"
+        sh "make deps"
         sh %(
 gox \
   -rebuild \
@@ -96,6 +96,9 @@ gox \
 end
 
 namespace :package do
+  desc "build all packages"
+  task :all => [:redhat, :ubuntu, :macos]
+
   desc "build all Ubuntu deb packages."
   task :ubuntu => [:ubuntu_1604, :ubuntu_1404]
 
