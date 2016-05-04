@@ -1,2 +1,2 @@
-SNAPD_OPTS='--config /etc/snap/snapd.conf.yaml'
+SNAPD_OPTS=''
 SNAPD_EXTRA_OPTS=''

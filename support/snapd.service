@@ -1,10 +1,10 @@
 [Unit]
 Description=Snap daemon
-Documentation=man:snapd(8) man:snapd_conf(5)
+Documentation=man:snapd(8) man:snapctl(1)
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/snapd --config /etc/snap/snapd.conf.yaml
+ExecStart=/usr/bin/snapd
 ExecStop=/bin/kill -INT $MAINPID
 Restart=on-failure
 

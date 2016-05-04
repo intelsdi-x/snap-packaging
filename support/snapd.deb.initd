@@ -9,7 +9,7 @@
 ### END INIT INFO
 
 DAEMON="/usr/bin/snapd"
-DAEMON_OPTS="--config /etc/snap/snapd.conf.yaml"
+DAEMON_OPTS=""
 NAME="snapd"
 PROCNAME="snapd"
 DESC="Snap is a framework for gathering telemetry from systems."

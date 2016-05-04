@@ -70,8 +70,8 @@ module Packaging
     end
 
     def package_config
-      config_file = File.join @config.support_path, "snapd.conf.yaml"
-      staging_file = File.join tmp_path, @etc, @project.name, "snapd.conf.yaml"
+      config_file = File.join @config.support_path, "snapd.conf"
+      staging_file = File.join tmp_path, @etc, @project.name, "snapd.conf"
 
       FileUtils.cp config_file, staging_file
     end
