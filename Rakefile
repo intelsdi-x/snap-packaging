@@ -10,8 +10,6 @@ begin
 rescue LoadError
 end
 
-require_relative 'lib/packaging/plugins'
-
 GO_VERSION = "1.6.1"
 
 @config = Packaging.config

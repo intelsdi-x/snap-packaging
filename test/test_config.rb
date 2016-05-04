@@ -21,6 +21,12 @@ class TestConfig < Packaging::Test
       tmp = File.join artifacts, 'tmp'
       assert_path tmp, config.tmp_path
 
+      config = File.join artifacts, 'config'
+      assert_path config, config.config_path
+
+      support = File.join artifacts, 'support'
+      assert_path support, config.support_path
+
       assert_equal config.directories, [project_root.to_s, artifacts, bin, pkg, src, tmp].to_set
     end
   end

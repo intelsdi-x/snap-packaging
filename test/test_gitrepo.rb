@@ -37,4 +37,11 @@ class TestGitRepo < Packaging::Test
     assert_equal @git.tag_names, %w[ 0.1.0 0.2.0 v0.12.0-beta v0.13.0-beta ]
     assert @repo.verify
   end
+
+  def test_parse_url
+    @git.parse_url
+
+    assert_equal @git.name, 'snap'
+    assert_equal @git.user, 'intelsdi-x'
+  end
 end
