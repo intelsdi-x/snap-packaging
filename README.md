@@ -27,18 +27,20 @@ Recommend bundle path as .bundle and appropriate binstub to avoid `bundle exec r
 
 ```
 $ bundle install --binstubs
-$ rake
-rake -T
+$ rake -T
 rake build:go_binary      # compile snap go binary
 rake help                 # Show the list of Rake tasks (rake -T)
-rake package:debian       # build all Debian deb packages
+rake notify:slack         # send a slack notification
+rake package:all          # build all packages
 rake package:mac_pkg      # build MacOS pkg package
 rake package:macos        # build all supported MacOS packages
 rake package:redhat       # build all RedHat RPM packages
 rake package:redhat_6     # build RedHat 6 RPM packages
 rake package:redhat_7     # build RedHat 7 RPM packages
+rake package:ubuntu       # build all Ubuntu deb packages
 rake package:ubuntu_1404  # build Ubuntu Trusty (14.04) packages
 rake package:ubuntu_1604  # build Ubuntu Xenial (16.04) packages
+rake plugin:metadata      # generate plugin metadata
 rake setup:artifacts      # create artifacts folders
 rake setup:godep          # install godep/gox
 rake test                 # Run tests
@@ -65,9 +67,9 @@ Build matrix
 
 | package format | tool | limitations |
 | --- | --- | --- |
-| Redhat RPM | fpm | requires init.d workaround |
-| Debian Deb | fpm | requires init.d workaround |
-| MacOS pkg | fpm | /usr/local/bin due to El Capitan's Systemm Integrity Protection (SIP) |
+| Redhat RPM | fpm | Redhat 6 init.d services requires [daemon workaround](https://github.com/intelsdi-x/snap/issues/878) |
+| Debian Deb | fpm | Ubuntu Trusty init.d service requires [daemon workaround](https://github.com/intelsdi-x/snap/issues/878) |
+| MacOS pkg | fpm | /usr/local/bin due to El Capitan's [System Integrity Protection (SIP)](https://support.apple.com/en-us/HT204899) |
 | MacOS Homebrew | homebrew | pending |
 
 ### RedHat
