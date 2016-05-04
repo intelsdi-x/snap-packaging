@@ -6,7 +6,7 @@ module Packaging
 
     def self.repos
       config = Packaging.config
-      file = File.join config.project_path, 'support', 'snap_plugins.yaml'
+      file = File.join config.support_path, "snap_plugins.yaml"
       Packaging::Util.load_yaml file
     end
 
@@ -40,7 +40,8 @@ module Packaging
         }
 
       end
-      puts JSON.pretty_generate data.to_json
+
+      JSON.pretty_generate data
     end
   end
 end
