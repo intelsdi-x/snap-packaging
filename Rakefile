@@ -10,7 +10,10 @@ begin
 rescue LoadError
 end
 
-GO_VERSION = "1.6.1"
+##
+# NOTE: currently do not support GVM and dynamic go_version
+
+GO_VERSION = "1.6.2"
 
 @config = Packaging.config
 PROJECT_PATH = @config.project_path
@@ -23,7 +26,7 @@ ARTIFACTS_PATH = @config.artifacts_path
 @snap.license = "Apache-2.0"
 @snap.vendor = "Intel SDI-X"
 @snap.url = "http://intelsdi-x.github.io/snap/"
-@snap.description = "snap is a framework for enabling the gathering of telemetry from systems."
+@snap.description = "Snap is an open telemetry framework designed to simplify the collection, processing and publishing of system data through a single API."
 @snap.s3_url = "s3://sdinan/packages"
 
 desc "Show the list of Rake tasks (rake -T)"
