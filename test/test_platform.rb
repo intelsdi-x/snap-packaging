@@ -9,6 +9,7 @@ class TestPlatform < Packaging::Test
     snap.vendor = "Intel SDI-X"
     snap.url = "http://intelsdi-x.github.io/snap/"
     snap.description = "snap is a framework for enabling the gathering of telemetry from systems."
+    snap.pkgversion = '1.0.0'
 
     @platform = Packaging::Platform.new("Redhat", "snap")
     @platform.osarch = "linux/amd64"
@@ -40,7 +41,7 @@ fpm \
   -t rpm -s dir -f \
   -C #{@config.tmp_path}/redhat/10 \
   -p #{@config.pkg_path}/os/redhat/10 \
-  -n "snap" -v "0.13.0" \
+  -n "snap" -v "1.0.0" \
   --iteration "1.el10" \
   -m "nan.liu@intel.com" \
   --license "Apache-2.0" \

@@ -128,7 +128,7 @@ fpm \
   -t #{@package_format} -s dir -f \
   -C #{fpm_tmp_path} \
   -p #{fpm_output_path} \
-  -n "#{@project.name}" -v "0.13.0" \
+  -n "#{@project.name}" -v "#{@project.pkgversion}" \
   --iteration "#{@package_iteration}" \
   -m "#{@project.maintainer}" \
   --license "#{@project.license}" \

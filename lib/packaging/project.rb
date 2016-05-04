@@ -14,6 +14,11 @@ module Packaging
     attr_accessor :s3_url
     attr_accessor :bintray_repo_url
 
+    ##
+    # For testing so we don't have to clone repos
+
+    attr_accessor :pkgversion
+
     def initialize(name, &block)
       @name = name
       @config = Packaging.config
@@ -48,7 +53,7 @@ module Packaging
     # if it can not be converted to semver, we assume it's a git sha or branch
 
     def pkgversion
-      Packaging::Util.semver gitversion
+      @pkgversion ||= Packaging::Util.semver gitversion
     rescue
       gitversion
     end
