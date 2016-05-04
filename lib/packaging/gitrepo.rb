@@ -18,13 +18,14 @@ module Packaging
 
     attr_reader :url
 
-
-
     def initialize(url)
       @url = url
       @config = Packaging.config
       parse_url
     end
+
+    ##
+    # parse the server, user/org, reponame from git url
 
     def parse_url
       raise ArgumentError, "repo_url must be https:// or git@" unless @url =~ %r{^https://|git@}

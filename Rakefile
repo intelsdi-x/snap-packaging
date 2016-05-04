@@ -10,9 +10,6 @@ begin
 rescue LoadError
 end
 
-#Packaging::Github.new "intelsdi-x/snap-plugin-collector-apache"
-#Packaging::Github.new "intelsdi-x/snap-plugin-collector-facter"
-
 require_relative 'lib/packaging/plugins'
 
 GO_VERSION = "1.6.1"
@@ -55,6 +52,8 @@ namespace :setup do
   task :godep do
     Packaging::Util.go_build do
       sh %(go get github.com/tools/godep)
+      # NOTE: gox curreently have a bug with gcflags option.
+      # please apply patch until PR #63 is merged.
       sh %(go get github.com/mitchellh/gox)
     end
   end
@@ -188,7 +187,7 @@ namespace :package do
 
   # NOTE: no plans for fink/macports support
   desc "build all supported MacOS packages."
-  task :macos => [:mac_pkg, :homebrew]
+  task :macos => [:mac_pkg]
 
   desc "build MacOS pkg package."
   task :mac_pkg do
@@ -209,10 +208,6 @@ namespace :package do
 
     plat.fpm_options = "--osxpkg-identifier-prefix com.intel.pkg"
     plat.fpm
-  end
-
-  # TODO:
-  task :homebrew do
   end
 end
 

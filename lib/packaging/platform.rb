@@ -32,6 +32,9 @@ module Packaging
       @service_files = []
     end
 
+    ##
+    # generated necessary files/directories in tmp for specific platform
+
     def prep_package
       create_skeleton
       package_binary
@@ -146,7 +149,6 @@ vagrant ssh #{@build_vm} -c \
         end
       end
     end
-
 
     ##
     # internal output path
