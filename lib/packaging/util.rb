@@ -36,7 +36,7 @@ module Packaging
 
     def self.load_json file
       file = File.expand_path file
-      raise ArgumentError, "Invalid yaml file path: #{file}" unless File.exist? file
+      raise ArgumentError, "Invalid json file path: #{file}" unless File.exist? file
       JSON.parse File.read file
     end
 

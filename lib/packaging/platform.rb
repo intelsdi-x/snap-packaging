@@ -20,7 +20,7 @@ module Packaging
 
     def initialize name, project_name
       @name = name
-      @project = Packaging.get project_name ||
+      @project = Packaging.get(project_name) ||
         fail("the project #{project_name} does not exist.")
       @config = Packaging.config
 
@@ -31,6 +31,9 @@ module Packaging
       @man = "/usr/share/man"
       @service_files = []
     end
+
+    ##
+    # generated necessary files/directories in tmp for specific platform
 
     def prep_package
       create_skeleton
@@ -119,13 +122,13 @@ module Packaging
       end
     end
 
-    def fpm
-      fpm_command = %(
+    def fpm_command
+      @fpm_command ||= %(
 fpm \
-  -t #{@package_format} -s dir -f\
+  -t #{@package_format} -s dir -f \
   -C #{fpm_tmp_path} \
   -p #{fpm_output_path} \
-  -n "#{@project.name}" -v "0.13.0" \
+  -n "#{@project.name}" -v "#{@project.pkgversion}" \
   --iteration "#{@package_iteration}" \
   -m "#{@project.maintainer}" \
   --license "#{@project.license}" \
@@ -133,8 +136,10 @@ fpm \
   --url "#{@project.url}" \
   --description "#{@project.description}" \
   #{@fpm_options} \
-  ./
-  )
+  ./ )
+    end
+
+    def fpm
       Packaging::Util.mkdir_p out_path
       Packaging::Util.working_dir do
         if @build_vm
@@ -147,7 +152,6 @@ vagrant ssh #{@build_vm} -c \
       end
     end
 
-
     ##
     # internal output path
 
@@ -157,19 +161,19 @@ vagrant ssh #{@build_vm} -c \
 
     def fpm_tmp_path
       if @build_vm
-        tmp_path.sub @config.project_path, ''
+        tmp_path.sub @config.project_path, ""
       else
         tmp_path
       end
     end
 
     def out_path
-      File.join @config.pkg_path, 'os', @os_name, @os_version
+      File.join @config.pkg_path, "os", @os_name, @os_version
     end
 
     def fpm_output_path
       if @build_vm
-        out_path.sub @config.project_path, ''
+        out_path.sub @config.project_path, ""
       else
         out_path
       end

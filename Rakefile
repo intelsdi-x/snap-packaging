@@ -10,12 +10,10 @@ begin
 rescue LoadError
 end
 
-#Packaging::Github.new "intelsdi-x/snap-plugin-collector-apache"
-#Packaging::Github.new "intelsdi-x/snap-plugin-collector-facter"
+##
+# NOTE: currently do not support GVM and dynamic go_version
 
-require_relative 'lib/packaging/plugins'
-
-GO_VERSION = "1.6.1"
+GO_VERSION = "1.6.2"
 
 @config = Packaging.config
 PROJECT_PATH = @config.project_path
@@ -28,7 +26,7 @@ ARTIFACTS_PATH = @config.artifacts_path
 @snap.license = "Apache-2.0"
 @snap.vendor = "Intel SDI-X"
 @snap.url = "http://intelsdi-x.github.io/snap/"
-@snap.description = "snap is a framework for enabling the gathering of telemetry from systems."
+@snap.description = "Snap is an open telemetry framework designed to simplify the collection, processing and publishing of system data through a single API."
 @snap.s3_url = "s3://sdinan/packages"
 
 desc "Show the list of Rake tasks (rake -T)"
@@ -55,6 +53,8 @@ namespace :setup do
   task :godep do
     Packaging::Util.go_build do
       sh %(go get github.com/tools/godep)
+      # NOTE: gox curreently have a bug with gcflags option.
+      # please apply patch until PR #63 is merged.
       sh %(go get github.com/mitchellh/gox)
     end
   end
@@ -188,7 +188,7 @@ namespace :package do
 
   # NOTE: no plans for fink/macports support
   desc "build all supported MacOS packages."
-  task :macos => [:mac_pkg, :homebrew]
+  task :macos => [:mac_pkg]
 
   desc "build MacOS pkg package."
   task :mac_pkg do
@@ -209,10 +209,6 @@ namespace :package do
 
     plat.fpm_options = "--osxpkg-identifier-prefix com.intel.pkg"
     plat.fpm
-  end
-
-  # TODO:
-  task :homebrew do
   end
 end
 

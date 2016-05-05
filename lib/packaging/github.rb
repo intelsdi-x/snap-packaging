@@ -10,6 +10,7 @@ module Packaging
     end
 
     def repo name
+      # Use the authenticated Octokit client when available
       if @@client
         @@client.repo name
       else
