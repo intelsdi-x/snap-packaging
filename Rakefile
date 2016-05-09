@@ -237,28 +237,13 @@ namespace :plugin do
 end
 
 namespace :notify do
+  desc "send a twitter tweet"
+  task :tweet do
+    Packaging::Notify::Twitter.tweet "Snap packages version #{@snap.pkgversion} now available: https://packagecloud.io/nanliu/snap"
+  end
+
   desc "send a slack notification"
   task :slack do
-    require "slack-ruby-client"
-
-    Slack.configure do |config|
-      file = File.join ENV["HOME"], ".slack"
-      slack_conf = YAML.load_file file rescue {}
-      config.token = ENV["SLACK_API_TOKEN"] || slack_conf["API_TOKEN"]
-    end
-
-    client = Slack::Web::Client.new
-
-    client.chat_postMessage(
-      channel: "#bot-spam",
-      as_user: true,
-      text: "Snap packages version <https://packagecloud.io/nanliu/snap|#{@snap.pkgversion} now available.> ",
-    )
-
-    client.chat_postMessage(
-      channel: "#build-snap",
-      as_user: true,
-      text: "Snap packages version <https://packagecloud.io/nanliu/snap|#{@snap.pkgversion} now available.> ",
-    )
+    Packaging::Notify::Slack.message "#build-snap", "Snap packages version <https://packagecloud.io/nanliu/snap|#{@snap.pkgversion} now available.>"
   end
 end

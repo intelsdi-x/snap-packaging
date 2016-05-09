@@ -13,6 +13,7 @@ module Packaging
   require 'packaging/github'
   require 'packaging/gitrepo'
   require 'packaging/upload'
+  require 'packaging/notify'
 
   @@projects = Set.new
   @@config = Packaging::Config.new
