@@ -36,6 +36,11 @@ Vagrant.configure(2) do |config|
   operating_systems.each do |os|
     config.vm.define os do |system|
       system.vm.box = "boxcutter/#{os}"
+
+      config.vm.provision "ansible" do |ansible|
+        ansible.playbook = "deploy.yml"
+        ansible.sudo = true
+      end
     end
   end
 end
