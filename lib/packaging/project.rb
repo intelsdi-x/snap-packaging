@@ -2,6 +2,7 @@ module Packaging
 
   class Project
     attr_accessor :name
+    attr_accessor :package_name
     attr_accessor :license
     attr_accessor :description
     attr_accessor :maintainer

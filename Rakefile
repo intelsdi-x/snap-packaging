@@ -20,7 +20,8 @@ PROJECT_PATH = @config.project_path
 SUPPORT_PATH = File.join PROJECT_PATH, "support"
 ARTIFACTS_PATH = @config.artifacts_path
 
-@snap = Packaging.project 'snap'
+@snap = Packaging.project "snap"
+@snap.package_name = "intel-snap"
 @snap.repo_url = "https://github.com/intelsdi-x/snap.git"
 @snap.maintainer = "nan.liu@intel.com"
 @snap.license = "Apache-2.0"

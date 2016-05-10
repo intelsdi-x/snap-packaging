@@ -1,15 +1,16 @@
-require 'helper'
+require "helper"
 
 class TestPlatform < Packaging::Test
   def setup
-    snap = Packaging.project 'snap'
+    snap = Packaging.project "snap"
+    snap.package_name = "intel-snap"
     snap.repo_url = "https://github.com/intelsdi-x/snap.git"
     snap.maintainer = "nan.liu@intel.com"
     snap.license = "Apache-2.0"
     snap.vendor = "Intel SDI-X"
     snap.url = "http://intelsdi-x.github.io/snap/"
     snap.description = "snap is a framework for enabling the gathering of telemetry from systems."
-    snap.pkgversion = '1.0.0'
+    snap.pkgversion = "1.0.0"
 
     @platform = Packaging::Platform.new("Redhat", "snap")
     @platform.osarch = "linux/amd64"
@@ -41,7 +42,7 @@ fpm \
   -t rpm -s dir -f \
   -C #{@config.tmp_path}/redhat/10 \
   -p #{@config.pkg_path}/os/redhat/10 \
-  -n "snap" -v "1.0.0" \
+  -n "intel-snap" -v "1.0.0" \
   --iteration "1.el10" \
   -m "nan.liu@intel.com" \
   --license "Apache-2.0" \

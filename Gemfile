@@ -8,7 +8,6 @@ end
 gem "faraday-http-cache"
 gem "fpm", "~>1.5"
 gem "git"
-gem "hashie", "~>3.4"
 gem "netrc"
 gem "octokit"
 gem "packagecloud-ruby"
