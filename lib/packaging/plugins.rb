@@ -34,8 +34,9 @@ module Packaging
           owner: repo.owner.login,
           desription: repo.description || "No description.",
           url: repo.html_url,
-          fork_count: repo.fork_count,
-          star_count: repo.subscribers_count,
+          fork_count: repo.forks_count,
+          star_count: repo.stargazers_count,
+          watch_count: repo.subscribers_count,
           issues_count: repo.open_issues_count,
         }
 
