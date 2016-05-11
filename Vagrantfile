@@ -2,20 +2,20 @@
 # vi: set ft=ruby :
 
 # NOTE: override this via the option --provider {provider_name}
-ENV['VAGRANT_DEFAULT_PROVIDER'] = 'parallels'
+ENV["VAGRANT_DEFAULT_PROVIDER"] = "parallels"
 
 Vagrant.configure(2) do |config|
   # Global settings:
   config.vm.synced_folder "./artifacts", "/artifacts"
 
-  config.vm.provider 'parallels' do |vm|
+  config.vm.provider "parallels" do |vm|
     vm.linked_clone = true if Vagrant::VERSION =~ /^1.8/
   end
 
   # NOTE: these boxes are not intended to test packages.
   build_systems = {
-    redhat: 'boxcutter/centos72',
-    debian: 'boxcutter/ubuntu1604',
+    redhat: "boxcutter/centos72",
+    debian: "boxcutter/ubuntu1604",
   }
 
   build_systems.each do |os, box|
@@ -40,6 +40,12 @@ Vagrant.configure(2) do |config|
       config.vm.provision "ansible" do |ansible|
         ansible.playbook = "deploy.yml"
         ansible.sudo = true
+      end
+
+      if Vagrant.has_plugin?("vagrant-serverspec")
+        config.vm.provision :serverspec do |spec|
+          spec.pattern = "spec/*_spec.rb"
+        end
       end
     end
   end

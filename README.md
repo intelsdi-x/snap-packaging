@@ -146,3 +146,61 @@ $ brew uninstall snap
 ## Vagrant
 
 The Vagrant VMs are split between build nodes and test nodes. Build nodes are named after OS family and allows building of snap packages for those platforms. Test nodes are named after specific operating systems and allow testing of snap packages built for that specific OS.
+
+```
+❯ vagrant status
+Current machine states:
+
+redhat                    running (parallels)
+debian                    running (parallels)
+centos67                  running (parallels)
+centos72                  running (parallels)
+ubuntu1604                running (parallels)
+ubuntu1404                running (parallels)
+
+This environment represents multiple VMs. The VMs are all listed
+above with their current state. For more information about a specific
+VM, run `vagrant status NAME`.
+```
+
+vagrant-serverspec plugin is recommended to verify packages:
+```
+❯ vagrant plugin install vagrant-serverspec
+Installing the 'vagrant-serverspec' plugin. This can take a few minutes...
+Installed the plugin 'vagrant-serverspec (1.1.0)'!
+```
+
+vagrant provision example:
+```
+❯ vagrant up ubuntu1604
+Bringing machine 'ubuntu1604' up with 'parallels' provider...
+==> ubuntu1604: Registering VM image from the base box 'boxcutter/ubuntu1604'...
+==> ubuntu1604: Creating new virtual machine as a linked clone...
+...
+==> ubuntu1604: Running provisioner: ansible...
+    ubuntu1604: Running ansible-playbook...
+
+PLAY [Debian] ******************************************************************
+
+TASK [setup] *******************************************************************
+ok: [ubuntu1604]
+TASK [add apt over https] ******************************************************
+ok: [ubuntu1604]
+TASK [add snap key] ************************************************************
+changed: [ubuntu1604]
+TASK [add snap repo] ***********************************************************
+changed: [ubuntu1604]
+TASK [install snap] ************************************************************
+changed: [ubuntu1604]
+TASK [enable snap service] *****************************************************
+changed: [ubuntu1604]
+
+PLAY RECAP *********************************************************************
+ubuntu1604                 : ok=7    changed=4    unreachable=0    failed=0
+
+==> ubuntu1604: Running provisioner: serverspec...
+.....
+
+Finished in 0.65776 seconds (files took 1 minute 12.24 seconds to load)
+5 examples, 0 failures
+```
