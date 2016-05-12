@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe package("intel-snap") do
+describe package("snap-telemetry") do
   it { should be_installed }
 end
 
@@ -11,6 +11,10 @@ end
 
 describe port(8181) do
   it { should be_listening }
+end
+
+describe command("snapd help") do
+  its(:stdout) { should match /snapd - A powerful telemetry framework/ }
 end
 
 describe command("snapctl") do

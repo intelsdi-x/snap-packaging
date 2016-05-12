@@ -9,6 +9,6 @@
     - name: add snap repo
       apt_repository: repo="deb https://packagecloud.io/nanliu/snap/ubuntu/ {{ansible_distribution_release}} main" state=present
     - name: install snap
-      apt: name=intel-snap state=latest
+      apt: name=snap-telemetry state=latest
     - name: enable snap service
       service: name=snapd state=started enabled=yes
