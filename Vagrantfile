@@ -31,11 +31,16 @@ Vagrant.configure(2) do |config|
 
   # NOTE: test boxes obtained from https://atlas.hashicorp.com/boxcutter
   # packer build source repo: https://github.com/boxcutter
-  operating_systems = %w{ centos67 centos72 ubuntu1604 ubuntu1404 }
+  operating_systems = %w{ centos67 centos72 ubuntu1604 ubuntu1404 osx1011 }
 
   operating_systems.each do |os|
     config.vm.define os do |system|
-      system.vm.box = "boxcutter/#{os}"
+      # osx built from boxcutter repo since the box is not publicly available
+      if os =~ /^osx/ then
+        system.vm.box = os
+      else
+        system.vm.box = "boxcutter/#{os}"
+      end
 
       config.vm.provision "ansible" do |ansible|
         ansible.playbook = "deploy.yml"
@@ -44,9 +49,10 @@ Vagrant.configure(2) do |config|
 
       if Vagrant.has_plugin?("vagrant-serverspec")
         config.vm.provision :serverspec do |spec|
-          spec.pattern = "spec/*_spec.rb"
+          spec.pattern = "spec/snap_spec.rb"
         end
       end
     end
   end
+
 end
