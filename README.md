@@ -31,6 +31,7 @@ $ rake -T
 rake build:go_binary      # compile snap go binary
 rake help                 # Show the list of Rake tasks (rake -T)
 rake notify:slack         # send a slack notification
+rake notify:tweet         # send a twitter tweet
 rake package:all          # build all packages
 rake package:mac_pkg      # build MacOS pkg package
 rake package:macos        # build all supported MacOS packages
@@ -57,8 +58,43 @@ Example `~/.netrc`:
 
 ```
 machine api.github.com
-  login nanliu
+  login <username>
   password <40 char OAuth token>
+```
+
+### Twitter OAuth
+
+To send a notification tweet, [register this application](https://apps.twitter.com/) with Twitter and either supply the configuration info either as environment variable or store it in `${HOME}/.twitter`:
+
+```
+---
+consumer_key: ...
+consumer_secret: ...
+access_token: ...
+access_token_secret: ...
+```
+
+or
+```
+$ TWITTER_CONSUMER_KEY=... \
+  TWITTER_CONSUMER_SECRET=... \
+  TWITTER_ACCESS_TOKEN=... \
+  TWITTER_ACCESS_TOKEN_SECRET=... \
+  rake notify:tweet
+```
+
+### Slack Tokens
+
+To send a slack notification, supply the snap_build_bot account api token info as environment variable or store it in `${HOME}/.slack`:
+
+```
+---
+API_TOKEN: '...'
+```
+
+or
+```
+$ SLACK_API_TOKEN=... rake notify:slack
 ```
 
 ## Operating System
