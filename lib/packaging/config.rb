@@ -1,5 +1,3 @@
-require 'hashie'
-
 module Packaging
   class Config
     GIT_VERSIONS = [:latest_version , :master]
