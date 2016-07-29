@@ -6,11 +6,11 @@
       yum_repository:
         name: snap
         description: Packagecloud.io snap repository
-        baseurl: https://packagecloud.io/nanliu/snap/el/$releasever/$basearch
+        baseurl: https://packagecloud.io/intelsdi-x/snap/el/$releasever/$basearch
         enabled: yes
         repo_gpgcheck: yes
         gpgcheck: no
-        gpgkey: https://packagecloud.io/nanliu/snap/gpgkey
+        gpgkey: https://packagecloud.io/intelsdi-x/snap/gpgkey
         sslverify: yes
         sslcacert: /etc/pki/tls/certs/ca-bundle.crt
     - name: install snap

@@ -5,9 +5,9 @@
     - name: add apt over https
       apt: name=apt-transport-https state=latest
     - name: add snap key
-      apt_key: url=https://packagecloud.io/nanliu/snap/gpgkey state=present
+      apt_key: url=https://packagecloud.io/intelsdi-x/snap/gpgkey state=present
     - name: add snap repo
-      apt_repository: repo="deb https://packagecloud.io/nanliu/snap/ubuntu/ {{ansible_distribution_release}} main" state=present
+      apt_repository: repo="deb https://packagecloud.io/intelsdi-x/snap/ubuntu/ {{ansible_distribution_release}} main" state=present
     - name: install snap
       apt: name=snap-telemetry state=latest
     - name: enable snap service
