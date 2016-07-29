@@ -55,9 +55,9 @@ module Packaging
         data << {
           name: plugin_name(repo),
           #full_name: repo.name,
-          type: type,
+          type: type.slice(0,1).capitalize + type.slice(1..-1),
           #owner: repo.owner.login,
-          desription: repo.description || "No description.",
+          description: repo.description || "No description.",
           url: repo.html_url,
           #fork_count: repo.forks_count,
           #star_count: repo.stargazers_count,
