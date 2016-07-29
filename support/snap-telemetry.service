@@ -1,0 +1,23 @@
+[Unit]
+Description=Snap telemetry daemon
+Documentation=man:snapd(8) man:snapctl(1)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+# NOTE: When available use override files or unit.d such as:
+# /etc/systemd/system/snap-telemetry.service
+# /etc/systemd/system/snap-telemetry.d/
+Type=simple
+EnvironmentFile=-/etc/default/snap-telemetry
+EnvironmentFile=-/etc/sysconfig/snap-telemetry
+ExecStart=/usr/bin/snapd
+ExecStop=/bin/kill -INT $MAINPID
+User=root
+Group=root
+Restart=on-failure
+LimitNOFILE=102400
+TimeoutStopSec=60
+
+[Install]
+WantedBy=multi-user.target
