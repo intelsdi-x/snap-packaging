@@ -9,11 +9,11 @@ describe file("/opt/snap/bin/snapctl") do
 end
 
 describe command("/opt/snap/bin/snapd help") do
-  its(:stdout) { should match /snapd - A powerful telemetry framework/ }
+  its(:stdout) { should match /snapd - The open telemetry framework/ }
 end
 
 describe command("/opt/snap/bin/snapctl") do
-  its(:stdout) { should match /snapctl - A powerful telemetry framework/ }
+  its(:stdout) { should match /snapctl - The open telemetry framework/ }
 end
 
 case os[:family]

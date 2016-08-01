@@ -240,7 +240,7 @@ end
 namespace :notify do
   desc "send a twitter tweet"
   task :tweet do
-    Packaging::Notify::Twitter.tweet "Snap packages version #{@snap.pkgversion} now available: https://packagecloud.io/nanliu/snap"
+    Packaging::Notify::Twitter.tweet "Snap packages version #{@snap.pkgversion} now available: https://packagecloud.io/intelsdi-x/snap"
   end
 
   desc "send a slack notification"
