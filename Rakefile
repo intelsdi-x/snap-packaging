@@ -116,7 +116,7 @@ namespace :package do
 
     plat.service = "systemd"
     plat.service_files = {
-      "snapd.service" => "/lib/systemd/system/snapd.service",
+      "snap-telemetry.service" => "/lib/systemd/system/snap-telemetry.service",
     }
 
     plat.prep_package
@@ -136,7 +136,7 @@ namespace :package do
 
     plat.service = "initd"
     plat.service_files = {
-      "snapd.deb.initd" => "/etc/init.d/snapd",
+      "snapd.deb.initd" => "/etc/init.d/snap-telemetry",
     }
 
     plat.prep_package
@@ -159,7 +159,7 @@ namespace :package do
 
     plat.service = "systemd"
     plat.service_files = {
-      "snapd.service" => "/usr/lib/systemd/system/snapd.service",
+      "snap-telemetry.service" => "/usr/lib/systemd/system/snap-telemetry.service",
     }
 
     plat.prep_package
@@ -179,8 +179,8 @@ namespace :package do
 
     plat.service = "initd"
     plat.service_files = {
-      "snapd.rh.initd" => "/etc/rc.d/init.d/snapd",
-      "snapd.sysconfig" => "/etc/sysconfig/snapd",
+      "snapd.rh.initd" => "/etc/rc.d/init.d/snap-telemetry",
+      "snapd.sysconfig" => "/etc/sysconfig/snap-telemetry",
     }
 
     plat.prep_package

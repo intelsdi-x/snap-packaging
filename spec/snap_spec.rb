@@ -42,7 +42,7 @@ else
     it { should be_symlink }
   end
 
-  describe service("snapd") do
+  describe service("snap-telemetry") do
     it { should be_enabled }
     it { should be_running }
   end
