@@ -42,6 +42,10 @@ else
     it { should be_symlink }
   end
 
+  describe command("ldd $(which snapd)") do
+    its(:stdout) { should match /not a dynamic executable/ }
+  end
+
   describe service("snap-telemetry") do
     it { should be_enabled }
     it { should be_running }
