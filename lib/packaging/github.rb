@@ -9,6 +9,15 @@ module Packaging
       enable_http_cache
     end
 
+    def issues name
+      # Use the authenticated Octokit client when available
+      if @@client
+        @@client.issues name
+      else
+        Octokit.issues name
+      end
+    end
+
     def repo name
       # Use the authenticated Octokit client when available
       if @@client
@@ -21,7 +30,7 @@ module Packaging
     def enable_http_cache
       require 'faraday-http-cache'
       stack = Faraday::RackBuilder.new do |builder|
-        builder.use Faraday::HttpCache
+        builder.use Faraday::HttpCache, :serializer => Marshal
         builder.use Octokit::Response::RaiseError
         builder.adapter Faraday.default_adapter
       end
