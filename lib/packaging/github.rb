@@ -3,6 +3,7 @@ require 'octokit'
 
 module Packaging
   class Github
+    Octokit.auto_paginate = true
     @@client = Octokit::Client.new(:netrc => true) if File.exists? File.join(ENV["HOME"], ".netrc")
 
     def initialize
