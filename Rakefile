@@ -235,6 +235,11 @@ namespace :plugin do
   task :metadata do
     puts Packaging::Plugins.metadata
   end
+
+  desc "generate plugin wishlist"
+  task :wishlist do
+    puts Packaging::Plugins.wishlist
+  end
 end
 
 namespace :notify do

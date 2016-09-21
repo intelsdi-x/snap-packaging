@@ -3,28 +3,23 @@ require 'octokit'
 
 module Packaging
   class Github
+    Octokit.auto_paginate = true
     @@client = Octokit::Client.new(:netrc => true) if File.exists? File.join(ENV["HOME"], ".netrc")
 
     def initialize
       enable_http_cache
     end
 
+    def client
+      @@client || Octokit
+    end
+
     def issues name
-      # Use the authenticated Octokit client when available
-      if @@client
-        @@client.issues name
-      else
-        Octokit.issues name
-      end
+      client.issues name
     end
 
     def repo name
-      # Use the authenticated Octokit client when available
-      if @@client
-        @@client.repo name
-      else
-        Octokit.repo name
-      end
+      client.repo name
     end
 
     def enable_http_cache

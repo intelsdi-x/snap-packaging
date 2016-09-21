@@ -35,6 +35,24 @@ module Packaging
       }[name.to_sym] || name.slice(0,1).capitalize + name.slice(1..-1)
     end
 
+    def self.wishlist
+      data = []
+
+      github = Packaging::Github.new
+      snap_issues = github.issues 'intelsdi-x/snap'
+
+      wishlist = snap_issues.find_all{ |issue| issue.labels.find{|label| label.name=='plugin-wishlist'} }
+      wishlist.each do |issue|
+        data << {
+          title: issue.title,
+          issue: issue.number,
+          description: issue.body,
+        }
+      end
+
+      JSON.pretty_generate data
+    end
+
     def self.metadata
       data = []
 
