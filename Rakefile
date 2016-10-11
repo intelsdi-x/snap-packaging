@@ -20,6 +20,11 @@ PROJECT_PATH = @config.project_path
 SUPPORT_PATH = File.join PROJECT_PATH, "support"
 ARTIFACTS_PATH = @config.artifacts_path
 
+SUPPORTED_OSARCH= [
+  "darwin/amd64",
+  "linux/amd64",
+]
+
 @snap = Packaging.project "snap"
 @snap.package_name = "snap-telemetry"
 @snap.repo_url = "https://github.com/intelsdi-x/snap.git"
@@ -64,10 +69,6 @@ end
 namespace :build do
   desc "compile snap go binary"
   task :go_binary do
-    SUPPORTED_OSARCH= [
-      "darwin/amd64",
-      "linux/amd64",
-    ]
 
     @snap.checkout
 
@@ -210,6 +211,20 @@ namespace :package do
 
     plat.fpm_options = "--osxpkg-identifier-prefix com.intel.pkg"
     plat.fpm
+  end
+
+  desc "build tar.gz for github release."
+  task :targz do
+    SUPPORTED_OSARCH.each do |osarch|
+
+      path = File.join @config.pkg_path, osarch
+      version = @snap.gitversion
+
+      Packaging::Util.working_dir(path) do
+        puts "compressing tar.gz for #{osarch}"
+        puts `gtar -czf snap-#{version}-#{osarch.gsub('/', '-')}.tar.gz snapd snapctl --owner=0 --group=0`
+      end
+    end
   end
 end
 
