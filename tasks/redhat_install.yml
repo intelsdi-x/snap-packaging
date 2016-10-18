@@ -15,7 +15,7 @@
         sslcacert: /etc/pki/tls/certs/ca-bundle.crt
     - name: install snap
       yum:
-        name: "/vagrant/artifacts/pkg/os/redhat/{{ ansible_distribution_version.split('.')[0] }}/snap-telemetry-0.15.0-1.el{{ ansible_distribution_version.split('.')[0] }}.x86_64.rpm"
+        name: "/vagrant/artifacts/pkg/os/redhat/{{ ansible_distribution_version.split('.')[0] }}/snap-telemetry-{{ snap_version }}-1.el{{ ansible_distribution_version.split('.')[0] }}.x86_64.rpm"
         state: present
     - name: enable snap service
       service:

@@ -4,6 +4,8 @@
 # NOTE: override this via the option --provider {provider_name}
 ENV["VAGRANT_DEFAULT_PROVIDER"] = "parallels"
 
+puts "Plugin missing: please run `vagrant plugin install vagrant-serverspec`." unless Vagrant.has_plugin? "vagrant-serverspec"
+
 Vagrant.configure(2) do |config|
   # Global settings:
   config.vm.synced_folder "./artifacts", "/artifacts"
@@ -48,13 +50,15 @@ Vagrant.configure(2) do |config|
       config.vm.provision "ansible" do |ansible|
         ansible.playbook = "deploy.yml"
         ansible.sudo = true
+
+        ansible.extra_vars = {
+          snap_version: ENV['SNAP_VERSION'] || '0.16.1'
+        }
       end
 
-      if Vagrant.has_plugin?("vagrant-serverspec")
-        config.vm.provision :serverspec do |spec|
-          spec.pattern = "spec/snap_spec.rb"
-        end
-      end
+      config.vm.provision :serverspec do |spec|
+        spec.pattern = "spec/snap_spec.rb"
+      end if Vagrant.has_plugin?("vagrant-serverspec")
     end
   end
 

@@ -16,7 +16,7 @@
         state: present
     - name: install snap
       apt:
-        deb: "/artifacts/pkg/os/ubuntu/{{ ansible_distribution_version }}/snap-telemetry_0.15.0-1{{ ansible_distribution_release }}_amd64.deb"
+        deb: "/artifacts/pkg/os/ubuntu/{{ ansible_distribution_version }}/snap-telemetry_{{ snap_version }}-1{{ ansible_distribution_release }}_amd64.deb"
         state: present
     - name: enable snap service
       service:
