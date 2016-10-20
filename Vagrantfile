@@ -18,7 +18,7 @@ Vagrant.configure(2) do |config|
   # NOTE: these boxes are not intended to test packages.
   build_systems = {
     redhat: "boxcutter/centos72",
-    debian: "ubuntu1604",
+    debian: "boxcutter/ubuntu1604",
   }
 
   build_systems.each do |os, box|
@@ -40,8 +40,6 @@ Vagrant.configure(2) do |config|
     config.vm.define os do |system|
       # osx built from boxcutter repo since the box is not publicly available
       if os =~ /^osx/ then
-        system.vm.box = os
-      elsif os =~ /^ubuntu/ then
         system.vm.box = os
       else
         system.vm.box = "boxcutter/#{os}"
