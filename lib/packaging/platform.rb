@@ -24,7 +24,7 @@ module Packaging
         fail("the project #{project_name} does not exist.")
       @config = Packaging.config
 
-      @bin = "/usr/bin"
+      @bin = "/usr/local/bin"
       @etc = "/etc"
       @log = "/var/log"
       @opt = "/opt"
