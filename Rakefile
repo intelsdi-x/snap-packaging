@@ -13,7 +13,7 @@ end
 ##
 # NOTE: currently do not support GVM and dynamic go_version
 
-GO_VERSION = "1.6.2"
+GO_VERSION = "1.7.1"
 
 @config = Packaging.config
 PROJECT_PATH = @config.project_path
@@ -92,6 +92,25 @@ gox \
   -output=#{File.join @config.pkg_path, osarch, "snapctl"} \
   ./cmd/snapctl
         )
+      end
+    end
+  end
+
+end
+
+namespace :fetch do
+  desc "fetch snap go binary from s3"
+  task :s3_binary do
+    Packaging::Util.working_dir @config.pkg_path do
+      SUPPORTED_OSARCH.each do |osarch|
+        FileUtils.mkdir_p(osarch) unless File.directory? osarch
+        url = "https://s3-us-west-2.amazonaws.com/snap.ci.snap-telemetry.io"
+        osplat = osarch.gsub('amd64', 'x86_64')
+        version = @snap.gitversion
+        sh "curl -sfL #{url}/snap/#{version}/#{osplat}/snapd -o #{osarch}/snapd"
+        sh "chmod 755 #{osarch}/snapd"
+        sh "curl -sfL #{url}/snap/#{version}/#{osplat}/snapctl -o #{osarch}/snapctl"
+        sh "chmod 755 #{osarch}/snapctl"
       end
     end
   end

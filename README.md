@@ -2,32 +2,64 @@
 
 ## Overview
 
-This repo contains some snap packaging tools. (Experimental)
-
-Currently the packaging tool use the local system (MacOS) to generate go binary and build the MacOS pkg binary. This will be migrated to a disposable box later. Currently packages are generated in the build VMs, this can be migrated to containers where suitable. The OS specific VMs are for package testing/validation.
+This repo contains _experimental_ snap packaging tools. The packaging tool fetches binary from S3 built by [Travis CI](https://travis-ci.org/intelsdi-x/snap) and use local VMs to build packages. The OS specific VMs are for package testing/validation. We also preserved some utility commands to allow local compilation.
 
 ### Workflow
 
-**Warning**: the first step affects your system:
+The default workflow is to fetch the binaries stored on S3.
+
+* generate artifacts skeleton: `rake setup:artifacts`
+* generate artifacts skeleton: `rake fetch:s3_binary
+* build packages for OS: `rake package:os_version`
+* test packages in vagrant: `vagrant up <operating_system>`
+* push packages to packagecloud.io: `rake upload:packagecloud`
+
+The alternative workflow compiles binaries on your local system for testing purpose.
+
+**Warning**: the first step will install several packages on your system:
 
 * configure go path and install gox on local mac : `rake setup:go`
 * generate artifacts skeleton: `rake setup:artifacts`
 * cross compile go binary: `rake package:go`
 * build packages for OS: `rake package:os_version`
 
+NOTE: gox currently have a bug with gcflags option, please patch and recompile until [PR #63](https://github.com/mitchellh/gox/pull/63) is merged.
+
 ## Installation
 
 ### Requirements
 
-* Ruby 2.3 + Bundler Gem
-* Parallels (VirtualBox/VMware Fusion might work)
+* Ruby 2.3+
+    * [rbenv](https://github.com/rbenv/rbenv) (optional)
+    * [Bundler Gem](https://bundler.io/)
+* Parallels Desktop 12+
 * Vagrant
 
-Recommend bundle path as .bundle and appropriate binstub to avoid `bundle exec rake`:
-
+The following steps will install Ruby 2.3.1 using rbenv on MacOS:
 ```
-$ bundle install --binstubs
-$ rake -T
+$ brew install ruby-build
+$ brew install rbenv
+$ rbenv install 2.3.1
+```
+
+Make sure your shell startup script contains the following setting (source `~/.{bash|zsh}rc` or restart shell as necessary):
+```
+# rbenv environment:
+eval "$(rbenv init -)"
+```
+
+Set ruby 2.3.1 as the local version for snap-packaging folder:
+```
+$ cd snap-packaging
+$ rbenv local 2.3.1
+$ gem install bundler --no-ri --no-rdoc
+```
+
+Configure bundle path and install all dependencies for the rake task:
+```
+$ bundle config path .bundle
+$ bundle install
+$ bundle exec rake -T
 rake build:go_binary      # compile snap go binary
 rake help                 # Show the list of Rake tasks (rake -T)
 rake notify:slack         # send a slack notification
@@ -48,6 +80,13 @@ rake test                 # Run tests
 rake upload:bintray       # upload packages to Bintray
 rake upload:packagecloud  # upload packages to PackageCloud.io
 rake upload:s3            # upload packages to AWS s3
+```
+
+Install vagrant, vagrant-parallel plugin:
+```
+$ brew cask install vagrant
+$ vagrant plugin install vagrant-parallels
+$ vagrant status
 ```
 
 ### Github OAuth
@@ -83,7 +122,7 @@ $ TWITTER_CONSUMER_KEY=... \
   rake notify:tweet
 ```
 
-### Slack Tokens
+### Slack Token
 
 To send a slack notification, supply the snap_build_bot account api token info as environment variable or store it in `${HOME}/.slack`:
 
@@ -95,6 +134,26 @@ API_TOKEN: '...'
 or
 ```
 $ SLACK_API_TOKEN=... rake notify:slack
+```
+
+### Packagecloud Token
+
+To push packages to packagecloud, create an account on packagecloud.io and join the [intelsdi-x org](https://packagecloud.io/intelsdi-x/). Obtain the API token from your [account settings](https://packagecloud.io/api_token) and store it in JSON format in `~/.packagecloud`:
+```json
+{
+  "url": "https://packagecloud.io",
+  "username": "...",
+  "token": "...",
+}
+```
+
+### Bintray API Key
+
+To push packages to bintray, store the appropriate API key in YAML format in `~/.bintray`:
+```yaml
+---
+username: ...
+apikey: ...
 ```
 
 ## Operating System
