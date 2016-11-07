@@ -28,7 +28,7 @@ class TestPlatform < Packaging::Test
       Packaging::Platform.new("Redhat", "bad")
     end
 
-    assert_equal @platform.bin, "/usr/bin"
+    assert_equal @platform.bin, "/usr/local/bin"
     assert_equal @platform.etc, "/etc"
     assert_equal @platform.log, "/var/log"
     assert_equal @platform.opt, "/opt"

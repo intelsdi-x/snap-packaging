@@ -8,7 +8,7 @@
 # Default-Stop:      0 1 6
 ### END INIT INFO
 
-DAEMON="/usr/bin/snapd"
+DAEMON="/opt/snap/bin/snapd"
 DAEMON_OPTS=""
 NAME="snapd"
 PROCNAME="snapd"
