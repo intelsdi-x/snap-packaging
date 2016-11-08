@@ -9,7 +9,7 @@ This repo contains _experimental_ snap packaging tools. The packaging tool fetch
 The default workflow is to fetch the binaries stored on S3.
 
 * generate artifacts skeleton: `rake setup:artifacts`
-* generate artifacts skeleton: `rake fetch:s3_binary
+* generate artifacts skeleton: `rake fetch:s3_binary`
 * build packages for OS: `rake package:os_version`
 * test packages in vagrant: `vagrant up <operating_system>`
 * push packages to packagecloud.io: `rake upload:packagecloud`
@@ -88,6 +88,17 @@ $ brew cask install vagrant
 $ vagrant plugin install vagrant-parallels
 $ vagrant status
 ```
+
+## Authentication Tokens
+
+Some rake task require API tokens. You only need the token if you execute these specific commands:
+
+* rake notify:slack (Slack)
+* rake notify:tweet (Twitter)
+* rake plugin:metadata (Github)
+* rake plugin:wishlist (Github)
+* rake upload:bintray (Bintray)
+* rake upload:packagecloud (Packagecloud)
 
 ### Github OAuth
 
