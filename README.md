@@ -184,7 +184,7 @@ Follow this workflow to release new Snap packages:
 * fetch pre-built binary from s3: `rake fetch:s3_binary`
 * bring up build VM: `vagrant up {redhat,debian}`
 * build packages for OS: `rake package:all`
-* test packages in vagrant: `vagrant up <operating_system>`
+* test packages in vagrant: `SNAP_VERSION=0.17.0 vagrant up <operating_system>`
 * push packages to packagecloud.io: `rake upload:packagecloud`
 * copy tar.gz release to github release page
 * add release notes generated from [Snap repo](https://github.com/intelsdi-x/snap) git log: `git log 0.17.0..0.18.0 --oneline | grep -v "Merge pull request #"`

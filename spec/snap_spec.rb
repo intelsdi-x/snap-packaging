@@ -34,11 +34,11 @@ else
     it { should be_installed }
   end
 
-  describe file("/usr/bin/snapd") do
+  describe file("/usr/local/bin/snapd") do
     it { should be_symlink }
   end
 
-  describe file("/usr/bin/snapctl") do
+  describe file("/usr/local/bin/snapctl") do
     it { should be_symlink }
   end
 
