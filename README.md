@@ -26,15 +26,16 @@ This repo contains _experimental_ snap packaging tools. The packaging tool fetch
 
 ## Installation
 
-* mandoc
+* gnu-tar and mandoc
 * Ruby 2.3+
     * [rbenv](https://github.com/rbenv/rbenv) (optional)
     * [Bundler Gem](https://bundler.io/)
 * Parallels Desktop 12+
 * Vagrant
 
-The mandoc package will generate the manpages:
+gtar is required for some tar options and mandoc will generate the manpages:
 ```
+$ brew install gnu-tar
 $ brew install mandoc
 ```
 
@@ -152,7 +153,7 @@ $ SLACK_API_TOKEN=... rake notify:slack
 
 ### Packagecloud Token
 
-To push packages to packagecloud, create an account on packagecloud.io and join the [intelsdi-x org](https://packagecloud.io/intelsdi-x/). Obtain the API token from your [account settings](https://packagecloud.io/api_token) and store it in JSON format in `~/.packagecloud`:
+To push packages to packagecloud, obtain the API token from [intelsdi-x account settings](https://packagecloud.io/api_token) and store it in JSON format in `~/.packagecloud`:
 ```json
 {
   "url": "https://packagecloud.io",
@@ -186,7 +187,8 @@ Follow this workflow to release new Snap packages:
 * build packages for OS: `rake package:all`
 * test packages in vagrant: `SNAP_VERSION=0.17.0 vagrant up <operating_system>`
 * push packages to packagecloud.io: `rake upload:packagecloud`
-* copy tar.gz release to github release page
+* upload `./artifacts/pkg/**/*.tar.gz` to [Snap's github release page](https://github.com/intelsdi-x/snap/releases)
+* upload `./artifacts/pkg/macos/10.11/*.pkg` to the [Snap's github release page](https://github.com/intelsdi-x/snap/releases)
 * add release notes generated from [Snap repo](https://github.com/intelsdi-x/snap) git log: `git log 0.17.0..0.18.0 --oneline | grep -v "Merge pull request #"`
 
 ### Release Prep
