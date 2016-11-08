@@ -1,39 +1,42 @@
 # Snap Packaging
 
+### Table of Content
+
+1. [Overview](#overview)
+2. [Installation](#installation)
+3. [Authentication Tokens](#authentication-tokens)
+    * [Github OAuth](#github-oauth)
+    * [Twitter OAuth](#twitter-oauth)
+    * [Slack Token](#slack-token)
+    * [Packagecloud Token](#packagecloud-token)
+    * [Bintray API Key](#bintray-api-key)
+4. [Usage](#usage)
+    * [Snap Release](#snap-release)
+    * [Release Prep](#release-prep)
+    * [Local Build](#local-build)
+5. [Operating System](#operating-system)
+    * [Redhat](#redhat)
+    * [Ubuntu](#ubuntu)
+    * [MacOS](#macos)
+6. [Vagrant](#vagrant)
+
 ## Overview
 
 This repo contains _experimental_ snap packaging tools. The packaging tool fetches binary from S3 built by [Travis CI](https://travis-ci.org/intelsdi-x/snap) and use local VMs to build packages. The OS specific VMs are for package testing/validation. We also preserved some utility commands to allow local compilation.
 
-### Workflow
-
-The default workflow is to fetch the binaries stored on S3.
-
-* generate artifacts skeleton: `rake setup:artifacts`
-* generate artifacts skeleton: `rake fetch:s3_binary`
-* build packages for OS: `rake package:os_version`
-* test packages in vagrant: `vagrant up <operating_system>`
-* push packages to packagecloud.io: `rake upload:packagecloud`
-
-The alternative workflow compiles binaries on your local system for testing purpose.
-
-**Warning**: the first step will install several packages on your system:
-
-* configure go path and install gox on local mac : `rake setup:go`
-* generate artifacts skeleton: `rake setup:artifacts`
-* cross compile go binary: `rake package:go`
-* build packages for OS: `rake package:os_version`
-
-NOTE: gox currently have a bug with gcflags option, please patch and recompile until [PR #63](https://github.com/mitchellh/gox/pull/63) is merged.
-
 ## Installation
 
-### Requirements
-
+* mandoc
 * Ruby 2.3+
     * [rbenv](https://github.com/rbenv/rbenv) (optional)
     * [Bundler Gem](https://bundler.io/)
 * Parallels Desktop 12+
 * Vagrant
+
+The mandoc package will generate the manpages:
+```
+$ brew install mandoc
+```
 
 The following steps will install Ruby 2.3.1 using rbenv on MacOS:
 ```
@@ -91,7 +94,7 @@ $ vagrant status
 
 ## Authentication Tokens
 
-Some rake task require API tokens. You only need the token if you execute these specific commands:
+The packagecloud API key is the only token that's required for building/releasing Snap packages, all other API tokens are optional, You only need the corresponding token if you execute these specific commands:
 
 * rake notify:slack (Slack)
 * rake notify:tweet (Twitter)
@@ -166,6 +169,48 @@ To push packages to bintray, store the appropriate API key in YAML format in `~/
 username: ...
 apikey: ...
 ```
+
+## Usage
+
+Please use `bundle exec rake ...` unless you have rbenv shim for `rake` commands.
+
+### Snap Release
+
+Follow this workflow to release new Snap packages:
+
+* git tag and push a new release in the [Snap repo](https://github.com/intelsdi-x/snap): `git tag -a 0.17.0 -m '0.17.0' && git push origin --tags`
+* generate artifacts skeleton: `rake setup:artifacts`
+* ensure the [travis.ci build](https://travis-ci.org/intelsdi-x/snap/branches) completes for the new tag
+* fetch pre-built binary from s3: `rake fetch:s3_binary`
+* bring up build VM: `vagrant up {redhat,debian}`
+* build packages for OS: `rake package:all`
+* test packages in vagrant: `vagrant up <operating_system>`
+* push packages to packagecloud.io: `rake upload:packagecloud`
+* copy tar.gz release to github release page
+* add release notes generated from [Snap repo](https://github.com/intelsdi-x/snap) git log: `git log 0.17.0..0.18.0 --oneline | grep -v "Merge pull request #"`
+
+### Release Prep
+
+This will verify everything works locally before performing a release:
+
+* generate artifacts skeleton: `rake setup:artifacts`
+* fetch pre-built binary from s3: `rake fetch:s3_binary`
+* bring up build VM: `vagrant up {redhat,debian}`
+* build packages for OS: `rake package:all`
+
+### Local Build
+
+The workflow compiles binaries on your local system for testing purpose.
+
+**Warning**: the first step will install several packages on your system:
+
+* configure go path and install gox on local mac : `rake setup:go`
+* generate artifacts skeleton: `rake setup:artifacts`
+* cross compile go binary: `rake package:go`
+* build packages for a specific OS: `rake package:<operating_system>`
+* test packages in vagrant: `vagrant up <operating_system>`
+
+NOTE: gox currently have a bug with gcflags option, please patch and recompile until [PR #63](https://github.com/mitchellh/gox/pull/63) is merged.
 
 ## Operating System
 
