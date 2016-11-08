@@ -37,13 +37,15 @@ _warning () { [ "${LOG_LEVEL}" -ge 4 ] && echo "$(_fmt warning) ${*}" 1>&2 || tr
 _error ()   { [ "${LOG_LEVEL}" -ge 3 ] && echo "$(_fmt error) ${*}" 1>&2 || true; exit 1; }
 
 _brew() {
-  if ! type -p "${1}" > /dev/null 2>&1; then
+  cmd=${2:-${1}}
+  if ! type -p "${cmd}" > /dev/null 2>&1; then
     _info "brew install ${1}"
     brew install "${1}"
   fi
 }
 
 _brew mandoc
+_brew gnu-tar gtar
 _brew ruby-build
 _brew rbenv
 if ! rbenv versions | grep 2.3.1 > /dev/null 2>&1; then

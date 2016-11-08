@@ -42,7 +42,7 @@ else
     it { should be_symlink }
   end
 
-  describe command("ldd $(which snapd)") do
+  describe command("ldd /opt/snap/bin/snapd") do
     its(:stdout) { should match /not a dynamic executable/ }
   end
 
