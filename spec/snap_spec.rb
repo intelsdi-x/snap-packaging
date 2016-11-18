@@ -1,19 +1,45 @@
 require "spec_helper"
 
-describe file("/opt/snap/bin/snapd") do
-  it { should exist }
+describe file("/opt/snap/bin/snaptel") do
+  it { should be_file }
+  it { should be_executable }
 end
 
-describe file("/opt/snap/bin/snapctl") do
-  it { should exist }
+describe file("/opt/snap/sbin/snapteld") do
+  it { should be_file }
+  it { should be_executable }
+end
+
+describe file("/usr/local/bin/snapd") do
+  it { should be_symlink }
+end
+
+describe file("/usr/local/bin/snapctl") do
+  it { should be_symlink }
+end
+
+describe file("/usr/local/bin/snaptel") do
+  it { should be_symlink }
+end
+
+describe file("/usr/local/sbin/snapteld") do
+  it { should be_symlink }
+end
+
+describe command("/opt/snap/sbin/snapteld help") do
+  its(:stdout) { should match /snap(tel|)d - The open telemetry framework/ }
+end
+
+describe command("/opt/snap/bin/snaptel") do
+  its(:stdout) { should match /snap(tel|ctl) - The open telemetry framework/ }
+end
+
+describe command("/opt/snap/bin/snapctl ") do
+  its(:stderr) { should match /This command is deprecated/ }
 end
 
 describe command("/opt/snap/bin/snapd help") do
-  its(:stdout) { should match /snapd - The open telemetry framework/ }
-end
-
-describe command("/opt/snap/bin/snapctl") do
-  its(:stdout) { should match /snapctl - The open telemetry framework/ }
+  its(:stderr) { should match /This command is deprecated/ }
 end
 
 case os[:family]
@@ -22,27 +48,12 @@ when 'darwin'
     it { should be_installed.by("pkgutil") }
   end
 
-  describe file("/usr/local/bin/snapd") do
-    it { should be_symlink }
-  end
-
-  describe file("/usr/local/bin/snapctl") do
-    it { should be_symlink }
-  end
 else
   describe package("snap-telemetry") do
     it { should be_installed }
   end
 
-  describe file("/usr/local/bin/snapd") do
-    it { should be_symlink }
-  end
-
-  describe file("/usr/local/bin/snapctl") do
-    it { should be_symlink }
-  end
-
-  describe command("ldd /opt/snap/bin/snapd") do
+  describe command("ldd /opt/snap/sbin/snapteld") do
     its(:stdout) { should match /not a dynamic executable/ }
   end
 
@@ -55,7 +66,8 @@ else
     it { should be_listening }
   end
 
-  describe file("/var/log/snap/snapd.log") do
-    it { should exist }
-  end
+  # NOTE: disable this test for now
+  # describe file("/var/log/snap/snapteld.log") do
+  #   it { should exist }
+  # end
 end

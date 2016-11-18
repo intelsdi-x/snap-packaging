@@ -1,22 +1,22 @@
 #!/bin/bash
-# snapd         Init script for running the snapd daemon
+# snapteld     Init script for running the snapteld daemon
 #
-# Author:       Nan Liu <nan.liu@intel.com>
+# Author:      Nan Liu <nan.liu@intel.com>
 #
 # chkconfig: - 98 02
 #
 # description: Snap is a framework for enabling the gathering of telemetry from systems.
-# processname: snapd
-# config: /etc/sysconfig/snapd
+# processname: snapteld
+# config: /etc/sysconfig/snapteld
 
 # Source function library.
 . /etc/rc.d/init.d/functions
 
-[ -f /etc/sysconfig/snapd ] && . /etc/sysconfig/snapd
-lockfile=/var/lock/subsys/snapd
+[ -f /etc/sysconfig/snapteld ] && . /etc/sysconfig/snapteld
+lockfile=/var/lock/subsys/snapteld
 piddir=/var/run/snap
-pidfile=${piddir}/snapd.pid
-snapd=/opt/snap/bin/snapd
+pidfile=${piddir}/snapteld.pid
+snapteld=/opt/snap/sbin/snapteld
 pid=$(cat $pidfile 2> /dev/null)
 RETVAL=0
 
@@ -40,8 +40,8 @@ start() {
     echo -n $"Starting snap daemon: "
     mkdir -p $piddir
     # NOTE: we currently do not support /etc/init.d/functions daemon
-    # daemon $daemonopts $snapd ${SNAPD_OPTS} ${SNAPD_EXTRA_OPTS}
-    $snapd ${SNAPD_OPTS} ${SNAPD_EXTRA_OPTS} > /dev/null 2>&1 &
+    # daemon $daemonopts $snapteld ${SNAPTELD_OPTS} ${SNAPTELD_EXTRA_OPTS}
+    $snapteld ${SNAPTELD_OPTS} ${SNAPTELD_EXTRA_OPTS} > /dev/null 2>&1 &
     PID=$!
     RETVAL=$?
     echo_result $RETVAL
@@ -53,7 +53,7 @@ start() {
 stop() {
     echo -n $"Stopping snap daemon: "
     if [ "$USEINITFUNCTIONS" = "true" ]; then
-      killproc $pidopts $snapd
+      killproc $pidopts $snapteld
       RETVAL=$?
     else
       if [ -n "${pid}" ]; then
@@ -72,9 +72,9 @@ restart() {
 }
 
 rh_status() {
-    base=snapd
+    base=snapteld
     if [ "$USEINITFUNCTIONS" = "true" ]; then
-      status $pidopts $snapd
+      status $pidopts $snapteld
       RETVAL=$?
       return $RETVAL
     else

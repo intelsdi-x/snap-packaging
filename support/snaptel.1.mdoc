@@ -1,35 +1,35 @@
 .Dd May 1, 2016
-.Dt SNAPCTL 1
+.Dt SNAPTEL 1
 .Os Intel SDI-X
 .Sh NAME
-.Nm snapctl
+.Nm snaptel
 .Nd A powerful telemetry framework
 .Sh SYNOPSIS
-.Nm snapctl
+.Nm snaptel
 .Op global options
 .Ar command
 .Op command options
 .Sh DESCRIPTION
 This document describes
-.Nm snapctl, the command line tool for managing snap telemetry framework.
+.Nm snaptel, the command line tool for managing snap telemetry framework.
 .Pp
 The global options are as follows:
 
 .Bl -tag -width "PAGEIN" -compact
 .It Ar --api-version, -a version
-The snapd API version
+The snapteld API version
 .It Ar --config, -c config_file
-Path to the snapctl config file
+Path to the snaptel config file
 .It Ar --insecure
 Ignore certificate errors when connecting to HTTPS REST URL
 .It Ar --password, -p password
 Password for REST API authentication
 .It Ar --url, -u url
-Specify the snapd REST URL to use (e.g. http://localhost:8181)
+Specify the snapteld REST URL to use (e.g. http://localhost:8181)
 .It Ar --help, -h
 Show help
 .It Ar --version, -v
-Show snapd version
+Show snapteld version
 .El
 
 The commands are as follows:
@@ -46,19 +46,19 @@ Only when tribe mode is enabled.
 .It Ar task
 .El
 .Sh COMMANDS
-.Nm snapctl plugin
+.Nm snaptel plugin
 .Ar commands:
 .Pp
 .Bl -tag -width "PAGEIN" -compact
 .It Ar load [plugin_path]
-load plugin in snapd
+load plugin in snapteld
 .It Ar unload [plugin_type] [plugin_name] [plugin_version]
-unload plugin from snapd
+unload plugin from snapteld
 .It Ar list
-list loaded snapd plugins
+list loaded snapteld plugins
 .El
 
-.Nm snapctl metric
+.Nm snaptel metric
 .Ar commands:
 .Pp
 .Bl -tag -width "PAGEIN" -compact
@@ -68,7 +68,7 @@ get details on a specific metric
 list available metrics
 .El
 
-.Nm snapctl task
+.Nm snaptel task
 .Ar commands:
 .Pp
 .Bl -tag -width "PAGEIN" -compact
@@ -89,15 +89,15 @@ watch task
 .El
 
 .Sh ENVIRONMENT
-.Nm snapd
+.Nm snapteld
 supports the following evnironment variables:
 
 .Bl -tag -compact
 .It SNAP_URL
-See snapctl --url
-.It SNAPCTL_CONFIG_PATH
-See snapctl --config
+See snaptel --url
+.It SNAPTEL_CONFIG_PATH
+See snaptel --config
 .El
 .Sh SEE ALSO
-.Xr snapd 8 ,
-.Xr snapd_config 5
+.Xr snapteld 8 ,
+.Xr snapteld_config 5

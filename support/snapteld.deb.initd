@@ -1,27 +1,27 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          snapd
+# Provides:          snapteld
 # Required-Start:    $network $named $syslog
 # Required-Stop:     $network $named $syslog
-# Should-Start:      snapd
+# Should-Start:      snapteld
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 ### END INIT INFO
 
-DAEMON="/opt/snap/bin/snapd"
+DAEMON="/opt/snap/sbin/snapteld"
 DAEMON_OPTS=""
-NAME="snapd"
-PROCNAME="snapd"
+NAME="snapteld"
+PROCNAME="snapteld"
 DESC="Snap is a framework for gathering telemetry from systems."
-PIDFILE="/var/run/snapd.pid"
+PIDFILE="/var/run/snapteld.pid"
 
 test -x $DAEMON || exit 0
 
-[ -r /etc/default/snapd ] && . /etc/default/snapd
+[ -r /etc/default/snapteld ] && . /etc/default/snapteld
 
 . /lib/lsb/init-functions
 
-start_snapd() {
+start_snapteld() {
     #start-stop-daemon --start --quiet --pidfile $PIDFILE --startas $DAEMON -- $DAEMON_OPTS
     $DAEMON $DAEMON_OPTS > /dev/null 2>&1 &
     PID=$!
@@ -30,19 +30,19 @@ start_snapd() {
     return $RETVAL
 }
 
-stop_snapd() {
+stop_snapteld() {
     start-stop-daemon --stop --retry TERM/10/KILL/5 --quiet --oknodo --pidfile $PIDFILE --name $PROCNAME
     rm -f "$PIDFILE"
 }
 
-restart_snapd() {
+restart_snapteld() {
     log_begin_msg "Restarting $DESC"
-    stop_snapd
-    start_snapd
+    stop_snapteld
+    start_snapteld
     log_end_msg $?
 }
 
-status_snapd() {
+status_snapteld() {
     if (type status_of_proc > /dev/null 2>&1) ; then
         status_of_proc -p "${PIDFILE}" "${DAEMON}" "${NAME}"
     else
@@ -83,23 +83,23 @@ status_snapd() {
 case "$1" in
     start)
         log_begin_msg "Starting $DESC"
-        start_snapd
+        start_snapteld
         log_end_msg $?
     ;;
     stop)
         log_begin_msg "Stopping $DESC"
-        stop_snapd
+        stop_snapteld
         log_end_msg $?
     ;;
     status)
-        status_snapd
+        status_snapteld
     ;;
     restart|force-reload)
-        restart_snapd
+        restart_snapteld
     ;;
     condrestart)
-        if status_snapd >/dev/null 2>&1; then
-            restart_snapd
+        if status_snapteld >/dev/null 2>&1; then
+            restart_snapteld
         fi
     ;;
     *)
