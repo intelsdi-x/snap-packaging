@@ -10,6 +10,7 @@ module Packaging
   require 'packaging/project'
   require 'packaging/platform'
   require 'packaging/plugins'
+  require 'packaging/dns'
   require 'packaging/github'
   require 'packaging/gitrepo'
   require 'packaging/upload'
