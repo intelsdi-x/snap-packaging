@@ -25,6 +25,7 @@ module Packaging
       @config = Packaging.config
 
       @bin = "/usr/local/bin"
+      @sbin = "/usr/local/sbin"
       @etc = "/etc"
       @log = "/var/log"
       @opt = "/opt"
@@ -52,29 +53,33 @@ module Packaging
       name = @project.name
       [
         @bin,
+        @sbin,
         File.join(@etc, name),
         File.join(@etc, name, 'keyrings'),
         File.join(@log, name),
         File.join(@opt, name, '/bin'),
+        File.join(@opt, name, '/sbin'),
         File.join(@opt, name, '/plugins'),
       ].flatten.uniq.compact
     end
 
     def create_skeleton
-      dirs = skel_directories.collect { |path| File.join tmp_path, path }
+      dirs = skel_directories.collect { |path| "#{tmp_path}/#{path}" }
       FileUtils.mkdir_p dirs
     end
 
     def package_binary
       opt_bin = File.join tmp_path, @opt, @project.name, "bin"
-      go_binary_files.each do |file|
-        FileUtils.cp file, opt_bin
-      end
+      opt_sbin = File.join tmp_path, @opt, @project.name, "sbin"
+      FileUtils.cp snaptel, opt_bin
+      FileUtils.cp snapteld, opt_sbin
+      FileUtils.cp File.join(@config.support_path,'snapctl'), opt_bin
+      FileUtils.cp File.join(@config.support_path,'snapd'), opt_bin
     end
 
     def package_config
-      config_file = File.join @config.support_path, "snapd.conf"
-      staging_file = File.join tmp_path, @etc, @project.name, "snapd.conf"
+      config_file = File.join @config.support_path, "snapteld.conf"
+      staging_file = File.join tmp_path, @etc, @project.name, "snapteld.conf"
 
       FileUtils.cp config_file, staging_file
     end
@@ -114,12 +119,13 @@ module Packaging
     end
 
     def create_symlink
-      go_binary_files.each do |file|
-        filename = Pathname.new(file).basename
-        link = File.join tmp_path, @bin, filename
-        target = File.join @opt, @project.name, 'bin', filename
-        Packaging::Util.ln_s link, target
-      end
+      Packaging::Util.ln_s File.join(tmp_path, @bin, 'snaptel'), '/opt/snap/bin/snaptel'
+      Packaging::Util.ln_s File.join(tmp_path, @sbin, 'snapteld'), '/opt/snap/sbin/snapteld'
+
+      # NOTE: this is temporary to ease migration:
+      Packaging::Util.ln_s File.join(tmp_path, '/etc/snap/snapd.conf'), '/etc/snap/snapteld.conf'
+      Packaging::Util.ln_s File.join(tmp_path, @bin, 'snapctl'), '/opt/snap/bin/snapctl'
+      Packaging::Util.ln_s File.join(tmp_path, @bin, 'snapd'), '/opt/snap/bin/snapd'
     end
 
     def fpm_command
@@ -156,7 +162,7 @@ vagrant ssh #{@build_vm} -c \
     # internal output path
 
     def tmp_path
-      File.join @config.tmp_path, @os_name, @os_version
+      return Pathname.new(File.join @config.tmp_path, @os_name, @os_version)
     end
 
     def fpm_tmp_path
@@ -183,8 +189,12 @@ vagrant ssh #{@build_vm} -c \
       File.join @config.pkg_path, @osarch
     end
 
-    def go_binary_files
-      Dir.glob("#{go_binary_path}/*")
+    def snaptel
+      "#{go_binary_path}/snaptel"
+    end
+
+    def snapteld
+      "#{go_binary_path}/snapteld"
     end
   end
 end

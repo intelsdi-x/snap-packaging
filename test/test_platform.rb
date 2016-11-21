@@ -54,7 +54,7 @@ fpm \
   end
 
   def test_tmp_path
-    assert_equal @platform.tmp_path, File.join(@config.tmp_path, "redhat/10")
+    assert_equal @platform.tmp_path, Pathname.new(File.join(@config.tmp_path, "redhat/10"))
   end
 
   def test_fpm_tmp_path

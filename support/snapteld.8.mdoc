@@ -1,15 +1,15 @@
 .Dd May 1, 2016
-.Dt SNAPD 8
+.Dt SNAPTELD 8
 .Os Intel SDI-X
 .Sh NAME
-.Nm snapd
+.Nm snapteld
 .Nd A powerful telemetry framework
 .Sh SYNOPSIS
-.Nm snapd
+.Nm snapteld
 .Op arguments
 .Sh DESCRIPTION
 This document describes
-.Nm snapd
+.Nm snapteld
 (Snap Daemon), the daemon program for snap telemetry framework.
 .Pp
 The options are as follows:
@@ -22,7 +22,7 @@ Auto discovery paths, separate multiple path by colons.
 .It Ar --cache-expiration seconds
 The time limit a metric cache entry is valid
 .It Ar --config config_file
-Specify snapd config file path
+Specify snapteld config file path
 .It Ar --disable-api, -d
 Disable the REST API
 .It Ar --keyring-paths, -k keyring_path[:<additional_path>]
@@ -32,19 +32,19 @@ Log level, 1-5 (Debug, Info, Warning, Error, Fatal)
 .It Ar --log-path, -o log_file
 Log file path (default: stdout when log-path is empty)
 .It Ar --max-procs, -c num_cores
-Maximum cores to use for snapd (default: 1)
+Maximum cores to use for snapteld (default: 1)
 .It Ar --max-running-plugins, -m number_plugins
 The maximum number of running plugins
 .It Ar --plugin-trust, -t level
 Plugin trust level 0-2 (Disabled, Enabled, Warning)
 .It Ar --rest-auth
-Enables snapd REST API authentication
+Enables snapteld REST API authentication
 .It Ar --rest-cert cert_file
 A path to a certificate to use for HTTPS deployment of snap's REST API
 .It Ar --rest-key key_file
-Path to a key file to use (for snapd HTTPS REST API)
+Path to a key file to use (for snapteld HTTPS REST API)
 .It Ar --rest-https
-Use HTTPS for snapd REST API
+Use HTTPS for snapteld REST API
 .It Ar --tribe
 Enable tribe mode
 .It Ar --tribe-addr ipaddress
@@ -62,59 +62,58 @@ Size of the work manager queue (default: 25)
 .It Ar --help, -h
 Show help
 .It Ar --version, -v
-Show snapd version
+Show snapteld version
 .El
 .Sh ENVIRONMENT
-.Nm snapd
+.Nm snapteld
 supports the following evnironment variables:
 
 .Bl -tag -compact
 .It SNAP_AUTODISCOVER_PATH
-See snapd --auto-discover
+See snapteld --auto-discover
 .It SNAP_CACHE_EXPIRATION
-See snapd --cache-expiration
+See snapteld --cache-expiration
 .It SNAP_CONFIG_PATH
-See snapd --config
+See snapteld --config
 .It SNAP_KEYRING_PATHS
-See snapd --keyring-paths
+See snapteld --keyring-paths
 .It SNAP_LOG_LEVEL
-See snapd --log-level
+See snapteld --log-level
 .It SNAP_LOG_PATH
-See snapd --log-path
+See snapteld --log-path
 .It SNAP_MAX_PLUGINS
-See snapd --max-running-plugins
+See snapteld --max-running-plugins
 .It SNAP_TRIBE
-See snapd --tribe
+See snapteld --tribe
 .It SNAP_TRIBE_ADDR
-See snapd --tribe-addr
+See snapteld --tribe-addr
 .It SNAP_TRIBE_NODE_NAME
-See snapd --tribe-node-name
+See snapteld --tribe-node-name
 .It SNAP_TRIBE_PORT
-See snapd --trip-port
+See snapteld --trip-port
 .It SNAP_TRIBE_SEED
-See snapd --tribe-seed
+See snapteld --tribe-seed
 .It SNAP_TRUST_LEVEL
-See snapd --plugin-trust
+See snapteld --plugin-trust
 .It WORK_MANAGER_POOL_SIZE
-See snapd --work-manager-pool-size
+See snapteld --work-manager-pool-size
 .It WORK_MANAGER_QUEUE_SIZE
-See snapd --work-manager-queue-size
+See snapteld --work-manager-queue-size
 .El
 
 .Sh FILES
 .Bl -tag -width "PAGEIN" -compact
-.It Pa /etc/snap/snapd.conf
+.It Pa /etc/snap/snapteld.conf
 snap daemon configuration file. see
-.Xr snapd_config 5 .
+.Xr snapteld_config 5 .
 
 .It Pa /etc/snap/keyrings
-snapd keyring directory. see
-.Xr snapd_config 5 .
+snapteld keyring directory. see
+.Xr snapteld_config 5 .
 
-.It Pa /var/log/snap/snapd.log
-snapd log file.
+.It Pa /var/log/snap/snapteld.log
+snapteld log file.
 
 .El
 .Sh SEE ALSO
-.Xr snapctl 1 ,
-.Xr snapd_config 5
+.Xr snaptel 1 ,

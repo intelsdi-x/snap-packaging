@@ -81,7 +81,7 @@ gox \
   -osarch "#{osarch}" \
   -ldflags="-w -X main.gitversion=#{@snap.gitversion}" \
   -gcflags="-trimpath=$GOPATH" \
-  -output=#{File.join @config.pkg_path, osarch, "snapd"} \
+  -output=#{File.join @config.pkg_path, osarch, "snapteld"} \
         )
         sh %(
 gox \
@@ -89,8 +89,8 @@ gox \
   -osarch "#{osarch}" \
   -ldflags="-w -X main.gitversion=#{@snap.gitversion}" \
   -gcflags="-trimpath=$GOPATH" \
-  -output=#{File.join @config.pkg_path, osarch, "snapctl"} \
-  ./cmd/snapctl
+  -output=#{File.join @config.pkg_path, osarch, "snaptel"} \
+  ./cmd/snaptel
         )
       end
     end
@@ -107,10 +107,16 @@ namespace :fetch do
         url = "https://s3-us-west-2.amazonaws.com/snap.ci.snap-telemetry.io"
         osplat = osarch.gsub('amd64', 'x86_64')
         version = @snap.gitversion
-        sh "curl -sfL #{url}/snap/#{version}/#{osplat}/snapd -o #{osarch}/snapd"
-        sh "chmod 755 #{osarch}/snapd"
-        sh "curl -sfL #{url}/snap/#{version}/#{osplat}/snapctl -o #{osarch}/snapctl"
-        sh "chmod 755 #{osarch}/snapctl"
+        begin
+          sh "curl -sfL #{url}/snap/#{version}/#{osplat}/snapteld -o #{osarch}/snapteld"
+          sh "curl -sfL #{url}/snap/#{version}/#{osplat}/snaptel -o #{osarch}/snaptel"
+        rescue
+
+          sh "curl -sfL #{url}/snap/#{version}/#{osplat}/snapd -o #{osarch}/snapteld"
+          sh "curl -sfL #{url}/snap/#{version}/#{osplat}/snapctl -o #{osarch}/snaptel"
+        end
+        sh "chmod 755 #{osarch}/snaptel"
+        sh "chmod 755 #{osarch}/snapteld"
       end
     end
   end
@@ -156,7 +162,7 @@ namespace :package do
 
     plat.service = "initd"
     plat.service_files = {
-      "snapd.deb.initd" => "/etc/init.d/snap-telemetry",
+      "snapteld.deb.initd" => "/etc/init.d/snap-telemetry",
     }
 
     plat.prep_package
@@ -199,8 +205,8 @@ namespace :package do
 
     plat.service = "initd"
     plat.service_files = {
-      "snapd.rh.initd" => "/etc/rc.d/init.d/snap-telemetry",
-      "snapd.sysconfig" => "/etc/sysconfig/snap-telemetry",
+      "snapteld.rh.initd" => "/etc/rc.d/init.d/snap-telemetry",
+      "snapteld.sysconfig" => "/etc/sysconfig/snap-telemetry",
     }
 
     plat.prep_package
@@ -241,7 +247,7 @@ namespace :package do
 
       Packaging::Util.working_dir(path) do
         puts "compressing tar.gz for #{osarch}"
-        puts `gtar -czf snap-#{version}-#{osarch.gsub('/', '-')}.tar.gz snapd snapctl --owner=0 --group=0`
+        puts `gtar -czf snap-#{version}-#{osarch.gsub('/', '-')}.tar.gz snapteld snaptel --owner=0 --group=0`
       end
     end
   end

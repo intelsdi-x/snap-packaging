@@ -1,6 +1,6 @@
 [Unit]
 Description=Snap telemetry daemon
-Documentation=man:snapd(8) man:snapctl(1)
+Documentation=man:snapteld(8) man:snaptel(1)
 Wants=network-online.target
 After=network-online.target
 
@@ -11,7 +11,7 @@ After=network-online.target
 Type=simple
 EnvironmentFile=-/etc/default/snap-telemetry
 EnvironmentFile=-/etc/sysconfig/snap-telemetry
-ExecStart=/opt/snap/bin/snapd
+ExecStart=/opt/snap/sbin/snapteld
 ExecStop=/bin/kill -INT $MAINPID
 User=root
 Group=root

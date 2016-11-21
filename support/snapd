@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+set -u
+set -o pipefail
+
+(>&2 echo "This command is deprecated, please use snapteld")
+exec /opt/snap/bin/snaptel "$@"
