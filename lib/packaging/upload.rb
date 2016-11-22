@@ -54,7 +54,7 @@ module Packaging
     end
 
     def self.packagecloud_conf
-      @bintray_conf ||= Packaging::Util.load_json File.join ENV["HOME"], ".packagecloud"
+      @pkgcloud_conf ||= Packaging::Util.load_json File.join ENV["HOME"], ".packagecloud"
     end
 
     def self.packagecloud project

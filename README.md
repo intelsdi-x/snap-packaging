@@ -10,6 +10,7 @@
     * [Slack Token](#slack-token)
     * [Packagecloud Token](#packagecloud-token)
     * [Bintray API Key](#bintray-api-key)
+    * [DNSimple Token](#dnsimple-token)
 4. [Usage](#usage)
     * [Snap Release](#snap-release)
     * [Release Prep](#release-prep)
@@ -171,6 +172,12 @@ username: ...
 apikey: ...
 ```
 
+### DNSimple Token
+
+To update package urls used by snap-telemetry.io, obtain the DNSimple token from [intelsdi-x account settings](https://dnsimple.com/a/59209/domains/snap-telemetry.io/settings) and store it in YAML format in `~/.dnsimple`:
+```yaml
+token: ...
+```
 ## Usage
 
 Please use `bundle exec rake ...` unless you have rbenv shim for `rake` commands.
@@ -190,6 +197,7 @@ Follow this workflow to release new Snap packages:
 * upload `./artifacts/pkg/**/*.tar.gz` to [Snap's github release page](https://github.com/intelsdi-x/snap/releases)
 * upload `./artifacts/pkg/macos/10.11/*.pkg` to the [Snap's github release page](https://github.com/intelsdi-x/snap/releases)
 * add release notes generated from [Snap repo](https://github.com/intelsdi-x/snap) git log: `git log 0.17.0..0.18.0 --oneline | grep -v "Merge pull request #"`
+* update dns records and verify changes: `rake dns:update && rake dns:list`
 
 ### Release Prep
 

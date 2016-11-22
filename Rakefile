@@ -124,7 +124,7 @@ end
 
 namespace :package do
   desc "build all packages"
-  task :all => [:redhat, :ubuntu, :macos]
+  task :all => [:redhat, :ubuntu, :macos, :targz]
 
   desc "build all Ubuntu deb packages."
   task :ubuntu => [:ubuntu_1604, :ubuntu_1404]
@@ -267,6 +267,19 @@ namespace :upload do
   desc "upload packages to PackageCloud.io"
   task :packagecloud do
     Packaging::Upload.packagecloud @snap
+  end
+end
+
+namespace :dns do
+  desc "list dns records"
+  task :list do
+    Packaging::DNS.list
+  end
+
+  desc "update dns records"
+  task :update do
+    version = @snap.gitversion
+    Packaging::DNS.update version
   end
 end
 

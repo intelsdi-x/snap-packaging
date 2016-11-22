@@ -5,6 +5,7 @@ group :development do
   gem "pry"
 end
 
+gem 'dnsimple', '~> 3.0'
 gem "faraday-http-cache"
 gem "fpm", "~>1.5"
 gem "git"
