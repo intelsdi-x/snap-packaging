@@ -1,9 +1,9 @@
-.Dd May 1, 2016
+.Dd Nov 22, 2016
 .Dt SNAPTEL 1
 .Os Intel SDI-X
 .Sh NAME
 .Nm snaptel
-.Nd A powerful telemetry framework
+.Nd The open telemetry framework
 .Sh SYNOPSIS
 .Nm snaptel
 .Op global options
@@ -11,21 +11,21 @@
 .Op command options
 .Sh DESCRIPTION
 This document describes
-.Nm snaptel, the command line tool for managing snap telemetry framework.
+.Nm snaptel, the command line tool for managing Snap telemetry framework.
 .Pp
 The global options are as follows:
 
 .Bl -tag -width "PAGEIN" -compact
 .It Ar --api-version, -a version
-The snapteld API version
+The Snap API version (default: "v1")
 .It Ar --config, -c config_file
 Path to the snaptel config file
 .It Ar --insecure
-Ignore certificate errors when connecting to HTTPS REST URL
+Ignore certificate errors when Snap's API is running HTTPS
 .It Ar --password, -p password
 Password for REST API authentication
 .It Ar --url, -u url
-Specify the snapteld REST URL to use (e.g. http://localhost:8181)
+Sets the URL to use (default: "http://localhost:8181")
 .It Ar --help, -h
 Show help
 .It Ar --version, -v
@@ -90,7 +90,7 @@ watch task
 
 .Sh ENVIRONMENT
 .Nm snapteld
-supports the following evnironment variables:
+supports the following environment variables:
 
 .Bl -tag -compact
 .It SNAP_URL
@@ -99,5 +99,4 @@ See snaptel --url
 See snaptel --config
 .El
 .Sh SEE ALSO
-.Xr snapteld 8 ,
-.Xr snapteld_config 5
+.Xr snapteld 8
