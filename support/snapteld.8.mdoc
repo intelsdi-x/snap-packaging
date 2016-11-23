@@ -1,50 +1,64 @@
-.Dd May 1, 2016
+.Dd Nov 22, 2016
 .Dt SNAPTELD 8
 .Os Intel SDI-X
 .Sh NAME
 .Nm snapteld
-.Nd A powerful telemetry framework
+.Nd The open telemetry framework
 .Sh SYNOPSIS
 .Nm snapteld
 .Op arguments
 .Sh DESCRIPTION
 This document describes
 .Nm snapteld
-(Snap Daemon), the daemon program for snap telemetry framework.
+(Snap Daemon), the daemon program for Snap telemetry framework.
 .Pp
 The options are as follows:
 
 .Bl -tag -width "PAGEIN" -compact
+.It Ar --api-addr, -b ipaddress
+API address[:port] to bind to/listen on. Default: empty string -> listen on all interfaces
 .It Ar --api-port, -p port_number
 API port (default: 8181)
 .It Ar --auto-discover, -a path[:<additional_path>]
-Auto discovery paths, separate multiple path by colons.
+Auto discover paths separated by colons
 .It Ar --cache-expiration seconds
-The time limit a metric cache entry is valid
+The time limit for which a metric cache entry is valid (default: 500ms)
 .It Ar --config config_file
-Specify snapteld config file path
+A path to a snapteld config file
+.It Ar --control-listen-addr ipaddress
+Listen address for control RPC server
+.It Ar --control-listen-port port_number
+Listen port for control RPC server (default: 8082)
 .It Ar --disable-api, -d
-Disable the REST API
+Disable the agent REST API
 .It Ar --keyring-paths, -k keyring_path[:<additional_path>]
 Keyring folder path containing signing verification separated by colons
+.It Ar --log-colors
+Log file coloring mode. Default is true -> colored (--log-colors=false -> no colors)
 .It Ar --log-level, -l [1-5]
-Log level, 1-5 (Debug, Info, Warning, Error, Fatal)
+Log level, 1-5 (Debug, Info, Warning, Error, Fatal; default: 3)
 .It Ar --log-path, -o log_file
-Log file path (default: stdout when log-path is empty)
+Path for logs. Empty path logs to stdout
+.It Ar --log-truncate
+Log file truncating mode. Default is false -> append. (true->truncate)
 .It Ar --max-procs, -c num_cores
-Maximum cores to use for snapteld (default: 1)
+Set max cores to use for snapteld (default: 1)
 .It Ar --max-running-plugins, -m number_plugins
-The maximum number of running plugins
+The maximum number of instances of a loaded plugin to run (default: 3)
+.It Ar --plugin-load-timeout, seconds
+The maximum number seconds a plugin can take to load (default: 3)
 .It Ar --plugin-trust, -t level
-Plugin trust level 0-2 (Disabled, Enabled, Warning)
+Plugin trust level 0-2 (Disabled, Enabled, Warning; Default: 1)
+.It Ar --pprof
+Enables profiling tools
 .It Ar --rest-auth
-Enables snapteld REST API authentication
+Enables Snap's REST API authentication
 .It Ar --rest-cert cert_file
-A path to a certificate to use for HTTPS deployment of snap's REST API
+A path to a certificate to use for HTTPS deployment of Snap's REST API
 .It Ar --rest-key key_file
-Path to a key file to use (for snapteld HTTPS REST API)
+A Path to a key file to use for HTTPS deployment of Snap's REST API
 .It Ar --rest-https
-Use HTTPS for snapteld REST API
+Start Snap's API as HTTPS
 .It Ar --tribe
 Enable tribe mode
 .It Ar --tribe-addr ipaddress
@@ -52,11 +66,11 @@ Addr tribe gossips over to maintain membership
 .It Ar --tribe-node-name hostname
 Name of this node in tribe cluster (default: hostname)
 .It Ar --tribe-port port_number
-Tribe gossip port to maintain membership
+Port tribe gossips over to maintain membership (default: 6000)
 .It Ar --tribe-seed ipaddress:port
 IP (or hostname) and port of a node to join (e.g. 127.0.0.1:6000)
 .It Ar --work-manager-pool-size size
-Size of the work manager pool (default 4)
+Size of the work manager pool (default: 4)
 .It Ar --work-manager-queue-size size
 Size of the work manager queue (default: 25)
 .It Ar --help, -h
@@ -66,15 +80,23 @@ Show snapteld version
 .El
 .Sh ENVIRONMENT
 .Nm snapteld
-supports the following evnironment variables:
+supports the following environment variables:
 
 .Bl -tag -compact
+.It GOMAXPROCS
+See snapteld --max-procs
+.It SNAP_ADDR
+See snapteld --api-addr
 .It SNAP_AUTODISCOVER_PATH
 See snapteld --auto-discover
 .It SNAP_CACHE_EXPIRATION
 See snapteld --cache-expiration
 .It SNAP_CONFIG_PATH
 See snapteld --config
+.It SNAP_CONTROL_LISTEN_ADDR
+See snapteld --control-listen-addr
+.It SNAP_CONTROL_LISTEN_PORT
+See snapteld --control-listen-port
 .It SNAP_KEYRING_PATHS
 See snapteld --keyring-paths
 .It SNAP_LOG_LEVEL
@@ -83,6 +105,10 @@ See snapteld --log-level
 See snapteld --log-path
 .It SNAP_MAX_PLUGINS
 See snapteld --max-running-plugins
+.It SNAP_PLUGIN_LOAD_TIMEOUT
+See snapteld --plugin-load-timeout
+.It SNAP_PORT
+See snapteld --api-port
 .It SNAP_TRIBE
 See snapteld --tribe
 .It SNAP_TRIBE_ADDR
@@ -104,7 +130,7 @@ See snapteld --work-manager-queue-size
 .Sh FILES
 .Bl -tag -width "PAGEIN" -compact
 .It Pa /etc/snap/snapteld.conf
-snap daemon configuration file. see
+Snap daemon configuration file. see
 .Xr snapteld_config 5 .
 
 .It Pa /etc/snap/keyrings
