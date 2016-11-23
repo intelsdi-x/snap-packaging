@@ -12,7 +12,7 @@ DAEMON="/opt/snap/sbin/snapteld"
 DAEMON_OPTS=""
 NAME="snapteld"
 PROCNAME="snapteld"
-DESC="Snap is a framework for gathering telemetry from systems."
+DESC="Snap, an open telemetry framework"
 PIDFILE="/var/run/snapteld.pid"
 
 test -x $DAEMON || exit 0
