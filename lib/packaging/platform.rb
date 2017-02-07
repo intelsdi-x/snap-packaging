@@ -60,6 +60,7 @@ module Packaging
         File.join(@opt, name, '/bin'),
         File.join(@opt, name, '/sbin'),
         File.join(@opt, name, '/plugins'),
+        File.join(@opt, name, '/tasks'),
       ].flatten.uniq.compact
     end
 

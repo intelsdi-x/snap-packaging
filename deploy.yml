@@ -1,7 +1,59 @@
----
-- include: tasks/redhat_install.yml
-  when: ansible_os_family == 'RedHat'
-- include: tasks/debian_install.yml
-  when: ansible_os_family == 'Debian'
-- include: tasks/macos_install.yml
-  when: ansible_os_family == 'Darwin'
+- hosts: all
+  tasks:
+    - group_by: key={{ ansible_os_family }}
+
+- hosts: RedHat
+  gather_facts: False
+  tasks:
+    - name: include snap repository
+      yum_repository:
+        name: snap
+        description: Packagecloud.io snap repository
+        baseurl: https://packagecloud.io/intelsdi-x/snap/el/$releasever/$basearch
+        enabled: yes
+        repo_gpgcheck: yes
+        gpgcheck: no
+        gpgkey: https://packagecloud.io/intelsdi-x/snap/gpgkey
+        sslverify: yes
+        sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+    - name: install snap
+      yum:
+        name: "/vagrant/artifacts/pkg/os/redhat/{{ ansible_distribution_version.split('.')[0] }}/snap-telemetry-{{ snap_version }}-1.el{{ ansible_distribution_version.split('.')[0] }}.x86_64.rpm"
+        state: present
+    - name: enable snap service
+      service:
+        name: snap-telemetry
+        state: started
+        enabled: yes
+
+- hosts: Debian
+  gather_facts: False
+  tasks:
+    - name: add apt over https
+      apt:
+        name: apt-transport-https
+        state: latest
+    - name: add snap key
+      apt_key:
+        url: https://packagecloud.io/intelsdi-x/snap/gpgkey
+        state: present
+    - name: add snap repo
+      apt_repository:
+        repo: "deb https://packagecloud.io/intelsdi-x/snap/ubuntu/ {{ ansible_distribution_release }} main"
+        state: present
+    - name: install snap
+      apt:
+        deb: "/artifacts/pkg/os/ubuntu/{{ ansible_distribution_version }}/snap-telemetry_{{ snap_version }}-1{{ ansible_distribution_release }}_amd64.deb"
+        state: present
+    - name: enable snap service
+      service:
+        name: snap-telemetry
+        state: started
+        enabled: yes
+
+- hosts: MacOS
+  gather_facts: False
+  tasks:
+    - name: install snap
+      mac_pkg: pkg_name=com.intel.pkg.snap-telemetry
+               url=https://s3-us-west-2.amazonaws.com/sdinan/packages/macos/10.11/snap-telemetry-1.0.1.pkg

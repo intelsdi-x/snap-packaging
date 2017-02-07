@@ -42,6 +42,14 @@ describe command("/opt/snap/bin/snapd help") do
   its(:stderr) { should match /This command is deprecated/ }
 end
 
+describe file("/opt/snap/plugins") do
+  it { should be_directory }
+end
+
+describe file("/opt/snap/tasks") do
+  it { should be_directory }
+end
+
 case os[:family]
 when 'darwin'
   describe package("com.intel.pkg.snap-telemetry") do
