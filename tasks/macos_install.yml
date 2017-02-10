@@ -1,7 +1,0 @@
----
-- name: MacOS
-  hosts: all
-  tasks:
-    - name: install snap
-      mac_pkg: pkg_name=com.intel.pkg.snap-telemetry
-               url=https://s3-us-west-2.amazonaws.com/sdinan/packages/macos/10.11/snap-telemetry-0.13.0.pkg
