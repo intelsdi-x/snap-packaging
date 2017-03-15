@@ -124,7 +124,7 @@ end
 
 namespace :package do
   desc "build all packages"
-  task :all => [:redhat, :ubuntu, :macos, :targz]
+  task :all => [:redhat, :ubuntu, :targz]
 
   desc "build all Ubuntu deb packages."
   task :ubuntu => [:ubuntu_1604, :ubuntu_1404]
