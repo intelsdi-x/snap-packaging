@@ -87,10 +87,11 @@ rake upload:packagecloud  # upload packages to PackageCloud.io
 rake upload:s3            # upload packages to AWS s3
 ```
 
-Install vagrant, vagrant-parallel plugin:
+Install vagrant, vagrant-parallel plugin and vagrant-serverspec:
 ```
 $ brew cask install vagrant
 $ vagrant plugin install vagrant-parallels
+$ vagrant plugin install vagrant-serverspec
 $ vagrant status
 ```
 
