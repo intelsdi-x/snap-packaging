@@ -23,6 +23,7 @@ ARTIFACTS_PATH = @config.artifacts_path
 SUPPORTED_OSARCH= [
   "darwin/amd64",
   "linux/amd64",
+  "windows/amd64",
 ]
 
 @snap = Packaging.project "snap"
@@ -108,15 +109,18 @@ namespace :fetch do
         osplat = osarch.gsub('amd64', 'x86_64')
         version = @snap.gitversion
         begin
-          sh "curl -sfL #{url}/snap/#{version}/#{osplat}/snapteld -o #{osarch}/snapteld"
-          sh "curl -sfL #{url}/snap/#{version}/#{osplat}/snaptel -o #{osarch}/snaptel"
+          if osarch =~ /^windows/
+            sh "curl -sfL #{url}/snap/#{version}/#{osplat}/snapteld.exe -o #{osarch}/snapteld.exe"
+            sh "curl -sfL #{url}/snap/#{version}/#{osplat}/snaptel.exe -o #{osarch}/snaptel.exe"
+          else
+            sh "curl -sfL #{url}/snap/#{version}/#{osplat}/snapteld -o #{osarch}/snapteld"
+            sh "curl -sfL #{url}/snap/#{version}/#{osplat}/snaptel -o #{osarch}/snaptel"
+          end
         rescue
-
           sh "curl -sfL #{url}/snap/#{version}/#{osplat}/snapd -o #{osarch}/snapteld"
           sh "curl -sfL #{url}/snap/#{version}/#{osplat}/snapctl -o #{osarch}/snaptel"
         end
-        sh "chmod 755 #{osarch}/snaptel"
-        sh "chmod 755 #{osarch}/snapteld"
+        sh "chmod 755 #{osarch}/snaptel*"
       end
     end
   end
@@ -246,8 +250,13 @@ namespace :package do
       version = @snap.gitversion
 
       Packaging::Util.working_dir(path) do
-        puts "compressing tar.gz for #{osarch}"
-        puts `gtar -czf snap-#{version}-#{osarch.gsub('/', '-')}.tar.gz snapteld snaptel --owner=0 --group=0`
+        if osarch =~ /^windows/
+          puts "compressing tar.gz for #{osarch}"
+          puts `gtar -czf snap-#{version}-#{osarch.gsub('/', '-')}.tar.gz snapteld.exe snaptel.exe --owner=0 --group=0`
+        else
+          puts "compressing tar.gz for #{osarch}"
+          puts `gtar -czf snap-#{version}-#{osarch.gsub('/', '-')}.tar.gz snapteld snaptel --owner=0 --group=0`
+        end
       end
     end
   end
